@@ -1,6 +1,6 @@
 digraph model_graph {
   // Dotfile by Django-Extensions graph_models
-  // Created: 2020-01-05 10:55
+  // Created: 2020-01-05 11:07
   // Cli Options: -a
 
   fontname = "Roboto"
@@ -482,9 +482,9 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">description</FONT>
+    <FONT FACE="Roboto">description</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    <FONT FACE="Roboto">CharField</FONT>
     </TD></TR>
   
   
@@ -524,9 +524,9 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">description</FONT>
+    <FONT FACE="Roboto">description</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    <FONT FACE="Roboto">CharField</FONT>
     </TD></TR>
   
   
@@ -566,9 +566,9 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">description</FONT>
+    <FONT FACE="Roboto">description</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    <FONT FACE="Roboto">CharField</FONT>
     </TD></TR>
   
   
@@ -682,9 +682,9 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">tags</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">tags</FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">CharField</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
     </TD></TR>
   
   

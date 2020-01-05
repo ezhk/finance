@@ -7,11 +7,7 @@ class IncomeSource(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
     description = models.CharField(
-        verbose_name="Income source description",
-        max_length=2048,
-        null=False,
-        blank=True,
-        default="",
+        verbose_name="Income source description", max_length=2048, blank=False,
     )
 
 
@@ -35,11 +31,9 @@ class Asset(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
     )
     description = models.CharField(
-        verbose_name="Asset category",
+        verbose_name="Asset category description",
         max_length=2048,
-        null=False,
-        blank=True,
-        default="",
+        blank=False,
     )
     kind = models.CharField(
         verbose_name="Kind of asset",
@@ -49,7 +43,6 @@ class Asset(models.Model):
     )
     balance = models.DecimalField(
         verbose_name="Current money balance",
-        null=False,
         blank=False,
         default=0,
         max_digits=19,
@@ -64,9 +57,7 @@ class ExpenseCategory(models.Model):
     description = models.CharField(
         verbose_name="Expense category description",
         max_length=2048,
-        null=False,
-        blank=True,
-        default="",
+        blank=False,
     )
     monthly_limit = models.FloatField(
         verbose_name="Monthly expenses limit", null=True, default=None
@@ -80,7 +71,6 @@ class IncomeTransaction(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     amount = models.DecimalField(
         verbose_name="Income maney amount",
-        null=False,
         blank=False,
         default=0,
         max_digits=19,
@@ -95,7 +85,6 @@ class ExpenseTransaction(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     amount = models.DecimalField(
         verbose_name="Expense maney amount",
-        null=False,
         blank=False,
         default=0,
         max_digits=19,
@@ -105,5 +94,6 @@ class ExpenseTransaction(models.Model):
         verbose_name="Comma separated transaction tags",
         max_length=4096,
         null=True,
+        blank=True,
         default=None,
     )
