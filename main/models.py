@@ -35,18 +35,23 @@ class Asset(models.Model):
         max_length=2048,
         blank=False,
     )
-    kind = models.CharField(
-        verbose_name="Kind of asset",
-        max_length=2,
-        choices=ASSET_CHOICES,
-        blank=True,
-    )
     balance = models.DecimalField(
         verbose_name="Current money balance",
         blank=False,
         default=0,
         max_digits=19,
         decimal_places=4,
+    )
+    kind = models.CharField(
+        verbose_name="Kind of asset",
+        max_length=2,
+        choices=ASSET_CHOICES,
+        blank=True,
+    )
+    image = models.ImageField(
+        verbose_name="Asset image preview",
+        upload_to="asset-images",
+        blank=True,
     )
 
 
@@ -61,6 +66,11 @@ class ExpenseCategory(models.Model):
     )
     monthly_limit = models.FloatField(
         verbose_name="Monthly expenses limit", null=True, default=None
+    )
+    image = models.ImageField(
+        verbose_name="Expense image preview",
+        upload_to="expense-images",
+        blank=True,
     )
 
 

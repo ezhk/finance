@@ -1,6 +1,6 @@
 digraph model_graph {
   // Dotfile by Django-Extensions graph_models
-  // Created: 2020-01-05 11:07
+  // Created: 2020-01-05 19:13
   // Cli Options: -a
 
   fontname = "Roboto"
@@ -457,7 +457,7 @@ digraph model_graph {
 
 
 
-  mainapp_models_IncomeSource [label=<
+  main_models_IncomeSource [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
@@ -491,7 +491,7 @@ digraph model_graph {
     </TABLE>
     >]
 
-  mainapp_models_Asset [label=<
+  main_models_Asset [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
@@ -532,6 +532,14 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">image</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">ImageField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
     <FONT COLOR="#7B7B7B" FACE="Roboto">kind</FONT>
     </TD><TD ALIGN="LEFT">
     <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
@@ -541,7 +549,7 @@ digraph model_graph {
     </TABLE>
     >]
 
-  mainapp_models_ExpenseCategory [label=<
+  main_models_ExpenseCategory [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
@@ -574,6 +582,14 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">image</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">ImageField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
     <FONT FACE="Roboto">monthly_limit</FONT>
     </TD><TD ALIGN="LEFT">
     <FONT FACE="Roboto">FloatField</FONT>
@@ -583,7 +599,7 @@ digraph model_graph {
     </TABLE>
     >]
 
-  mainapp_models_IncomeTransaction [label=<
+  main_models_IncomeTransaction [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
@@ -633,7 +649,7 @@ digraph model_graph {
     </TABLE>
     >]
 
-  mainapp_models_ExpenseTransaction [label=<
+  main_models_ExpenseTransaction [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
@@ -742,25 +758,25 @@ digraph model_graph {
   [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
 
 
-  mainapp_models_IncomeSource -> django_contrib_auth_models_User
+  main_models_IncomeSource -> django_contrib_auth_models_User
   [label=" user (incomesource)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  mainapp_models_Asset -> django_contrib_auth_models_User
+  main_models_Asset -> django_contrib_auth_models_User
   [label=" user (asset)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  mainapp_models_ExpenseCategory -> django_contrib_auth_models_User
+  main_models_ExpenseCategory -> django_contrib_auth_models_User
   [label=" user (expensecategory)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  mainapp_models_IncomeTransaction -> mainapp_models_IncomeSource
+  main_models_IncomeTransaction -> main_models_IncomeSource
   [label=" income (incometransaction)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  mainapp_models_IncomeTransaction -> mainapp_models_Asset
+  main_models_IncomeTransaction -> main_models_Asset
   [label=" asset (incometransaction)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  mainapp_models_ExpenseTransaction -> mainapp_models_Asset
+  main_models_ExpenseTransaction -> main_models_Asset
   [label=" asset (expensetransaction)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  mainapp_models_ExpenseTransaction -> mainapp_models_ExpenseCategory
+  main_models_ExpenseTransaction -> main_models_ExpenseCategory
   [label=" expense (expensetransaction)"] [arrowhead=none, arrowtail=dot, dir=both];
 
 
