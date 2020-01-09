@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 
 
 class IncomeSource(models.Model):
@@ -75,8 +75,8 @@ class ExpenseCategory(models.Model):
 
 
 class IncomeTransaction(models.Model):
-    income = models.ForeignKey(IncomeSource, on_delete=models.CASCADE)
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
+    income = models.ForeignKey(IncomeSource, on_delete=models.CASCADE)
 
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     amount = models.DecimalField(
@@ -86,6 +86,32 @@ class IncomeTransaction(models.Model):
         max_digits=19,
         decimal_places=4,
     )
+
+    def save(self, *args, **kwargs):
+        """
+        Redefine standart save method,
+        because need to change asset balance at first.
+        """
+
+        with transaction.atomic():
+            self.asset.balance += self.amount
+            self.asset.save()
+
+            super().save(*args, **kwargs)
+        return True
+
+    def delete(self):
+        """
+        Redefine standart delete method,
+        because need to change asset balance at first.
+        """
+
+        with transaction.atomic():
+            self.asset.balance -= self.amount
+            self.asset.save()
+
+            super().delete()
+        return True
 
 
 class ExpenseTransaction(models.Model):
@@ -105,5 +131,21 @@ class ExpenseTransaction(models.Model):
         max_length=4096,
         null=True,
         blank=True,
-        default=None,
+        default="",
     )
+
+    def save(self, *args, **kwargs):
+        with transaction.atomic():
+            self.asset.balance -= self.amount
+            self.asset.save()
+
+            super().save(*args, **kwargs)
+        return True
+
+    def delete(self):
+        with transaction.atomic():
+            self.asset.balance += self.amount
+            self.asset.save()
+
+            super().delete()
+        return True

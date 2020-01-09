@@ -1,3 +1,4 @@
 Django==3.0.2
+django-extension==2.2.5
 Pillow==7.0.0
 pipupgrade==1.5.2
