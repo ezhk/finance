@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 # Quick-start development settings - unsuitable for production
@@ -38,6 +38,15 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_extensions",
+    # REST API
+    "rest_framework",
+    # Auth
+    "allauth",
+    "allauth.account",
+    "django.contrib.sites",
+    "rest_framework.authtoken",
+    "rest_auth",
+    "rest_auth.registration",
     # internal projects
     "main.apps.MainappConfig",
     "api.apps.ApiConfig",
