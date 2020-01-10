@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.conf import settings
 from django.db import models, transaction
 
@@ -80,7 +82,7 @@ class IncomeTransaction(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     amount = models.DecimalField(
-        verbose_name="Income maney amount",
+        verbose_name="Income money amount",
         blank=False,
         default=0,
         max_digits=19,
@@ -94,7 +96,7 @@ class IncomeTransaction(models.Model):
         """
 
         with transaction.atomic():
-            self.asset.balance += self.amount
+            self.asset.balance += Decimal(self.amount)
             self.asset.save()
 
             super().save(*args, **kwargs)
@@ -107,7 +109,7 @@ class IncomeTransaction(models.Model):
         """
 
         with transaction.atomic():
-            self.asset.balance -= self.amount
+            self.asset.balance -= Decimal(self.amount)
             self.asset.save()
 
             super().delete()
@@ -136,7 +138,7 @@ class ExpenseTransaction(models.Model):
 
     def save(self, *args, **kwargs):
         with transaction.atomic():
-            self.asset.balance -= self.amount
+            self.asset.balance -= Decimal(self.amount)
             self.asset.save()
 
             super().save(*args, **kwargs)
@@ -144,7 +146,7 @@ class ExpenseTransaction(models.Model):
 
     def delete(self):
         with transaction.atomic():
-            self.asset.balance += self.amount
+            self.asset.balance += Decimal(self.amount)
             self.asset.save()
 
             super().delete()
