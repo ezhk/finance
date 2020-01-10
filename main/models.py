@@ -21,11 +21,11 @@ class Asset(models.Model):
     """
 
     CASH, BANK_CARD, CREDIT_CARD = "CA", "BC", "CC"
-    ASSET_CHOICES = (
+    ASSET_CHOICES = [
         (CASH, "Cash"),
         (BANK_CARD, "Bank card"),
         (CREDIT_CARD, "Credit card"),
-    )
+    ]
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE
@@ -42,8 +42,8 @@ class Asset(models.Model):
         max_digits=19,
         decimal_places=4,
     )
-    kind = models.CharField(
-        verbose_name="Kind of asset",
+    type = models.CharField(
+        verbose_name="Type of asset",
         max_length=2,
         choices=ASSET_CHOICES,
         blank=True,
