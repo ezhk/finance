@@ -13,9 +13,12 @@ from api.serializers import (
 )
 
 
-class NotAuthenticated(APIException):
+class ForbiddenException(APIException):
     status_code = status.HTTP_403_FORBIDDEN
-    default_detail = {"error": True, "message": "User must be authenticated"}
+    default_detail = {
+        "error": True,
+        "message": "User not authenticated or insufficient roles",
+    }
     default_code = "not_authenticated"
 
 
@@ -29,15 +32,43 @@ class IsAuthenticated(BasePermission):
     def has_permission(self, request, view):
         if request.user.pk is not None:
             return True
-        raise NotAuthenticated()
+        raise ForbiddenException()
 
 
-class AssetSet(viewsets.ModelViewSet):
-    model_class = Asset
-    serializer_class = AssetSerializer
+class IsOwner(BasePermission):
+    """
+    Class using in BaseModelSet for user owner validation.
+    """
 
-    queryset = model_class.objects.select_related().all()
-    permission_classes = [IsAuthenticated]
+    def __init__(self, **kwargs):
+        self.model = kwargs.get("model")
+        super().__init__()
+
+    def has_permission(self, request, view):
+        query = self.model.objects.filter(
+            pk=view.kwargs.get("pk"), user=request.user.pk
+        )
+        if query.count():
+            return True
+        raise ForbiddenException()
+
+
+class BaseModelSet(viewsets.ModelViewSet):
+    model_class = None
+    serializer_class = None
+
+    queryset = None
+
+    def get_permissions(self):
+        """
+        Specific method that allow to determine permittion
+        classes, they are supported auth and owner checks.
+        """
+
+        default_permissions = [IsAuthenticated()]
+        if self.action in ("retrieve", "update", "destroy"):
+            default_permissions.append(IsOwner(model=self.model_class))
+        return default_permissions
 
     def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
@@ -76,14 +107,21 @@ class AssetSet(viewsets.ModelViewSet):
         return super().destroy(request, pk)
 
 
-class IncomeSet(AssetSet):
+class AssetSet(BaseModelSet):
+    model_class = Asset
+    serializer_class = AssetSerializer
+
+    queryset = model_class.objects.select_related().all()
+
+
+class IncomeSet(BaseModelSet):
     model_class = IncomeSource
     serializer_class = IncomeSerializer
 
     queryset = model_class.objects.select_related().all()
 
 
-class ExpenseSet(AssetSet):
+class ExpenseSet(BaseModelSet):
     model_class = ExpenseCategory
     serializer_class = IncomeSerializer
 
