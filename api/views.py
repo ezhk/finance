@@ -1,7 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, mixins
+from rest_framework.response import Response
 
 from main.models import (
     Asset,
@@ -10,7 +11,7 @@ from main.models import (
     IncomeTransaction,
     ExpenseTransaction,
 )
-from api.exceptions import NotFoundException
+from api.exceptions import NotFoundException, BadRequestException
 from api.permissions import IsAuthenticated, IsOwner
 from api.serializers import (
     AssetSerializer,
@@ -52,27 +53,7 @@ class BaseModelSet(viewsets.ModelViewSet):
         queryset_object = self.queryset.filter(user=request.user.pk)
         if not queryset_object:
             raise NotFoundException()
-        return JsonResponse(
-            self.serializer_class(queryset_object, many=True).data, safe=False
-        )
-
-    # def retrieve(self, request, pk):
-    #     obj = self.queryset.filter(pk=pk, user=request.user.pk).first()
-    #     if not obj:
-    #         raise NotFoundException()
-    #     return JsonResponse(self.serializer_class(obj).data)
-
-    # def update(self, request, pk):
-    #     obj = self.queryset.filter(pk=pk, user=request.user.pk).first()
-    #     if not obj:
-    #         raise NotFoundException()
-    #     return super().update(request, pk)
-
-    # def destroy(self, request, pk):
-    #     obj = self.queryset.filter(pk=pk, user=request.user.pk).first()
-    #     if not obj:
-    #         raise NotFoundException()
-    #     return super().destroy(request, pk)
+        return Response(self.serializer_class(queryset_object, many=True).data)
 
 
 class AssetSet(BaseModelSet):
@@ -96,7 +77,15 @@ class ExpenseSet(BaseModelSet):
     queryset = model_class.objects.select_related().all()
 
 
-class BaseModelTransactionSet(viewsets.ModelViewSet):
+class BaseModelTransactionSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
+    permission_classes = [IsAuthenticated]
+
     model_class = None
     serializer_class = None
 
@@ -109,10 +98,11 @@ class BaseModelTransactionSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        from_id = request.data.get(self.from_field, {}).get("pk", None)
-        to_id = request.data.get(self.to_field, {}).get("pk", None)
-        if from_id is None or to_id is None:
-            raise NotFoundException()
+        try:
+            from_id = request.data[self.from_field]["pk"]
+            to_id = request.data[self.to_field]["pk"]
+        except:
+            raise BadRequestException()
 
         from_qs = self.from_model.objects.filter(
             pk=from_id, user=request.user.pk
@@ -131,6 +121,35 @@ class BaseModelTransactionSet(viewsets.ModelViewSet):
         return JsonResponse(
             {"pk": transaction.pk}, status=status.HTTP_201_CREATED
         )
+
+    def list(self, request, *args, **kwargs):
+        queryset_object = self.queryset.filter(
+            **{f"{self.from_field}__user": request.user},
+            **{f"{self.to_field}__user": request.user},
+        )
+        if not queryset_object:
+            raise NotFoundException()
+        return Response(self.serializer_class(queryset_object, many=True).data)
+
+    def retrieve(self, request, pk):
+        obj = self.queryset.filter(
+            pk=pk,
+            **{f"{self.from_field}__user": request.user},
+            **{f"{self.to_field}__user": request.user},
+        ).first()
+        if not obj:
+            raise NotFoundException()
+        return super().retrieve(request, pk)
+
+    def destroy(self, request, pk):
+        obj = self.queryset.filter(
+            pk=pk,
+            **{f"{self.from_field}__user": request.user},
+            **{f"{self.to_field}__user": request.user},
+        ).first()
+        if not obj:
+            raise NotFoundException()
+        return super().destroy(request, pk)
 
 
 class IncomeTransactionSet(BaseModelTransactionSet):
