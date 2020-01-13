@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from rest_framework import status, viewsets, mixins
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from main.models import (
@@ -35,7 +36,7 @@ class BaseModelSet(viewsets.ModelViewSet):
         """
 
         default_permissions = [IsAuthenticated()]
-        if self.action in ("retrieve", "update", "destroy"):
+        if self.action not in ("create", "list"):
             default_permissions.append(IsOwner(model=self.model_class))
         return default_permissions
 
@@ -47,7 +48,9 @@ class BaseModelSet(viewsets.ModelViewSet):
         obj.user = request.user
         obj.save()
 
-        return JsonResponse({"pk": obj.pk}, status=status.HTTP_201_CREATED)
+        return Response(
+            self.serializer_class(obj).data, status=status.HTTP_201_CREATED,
+        )
 
     def list(self, request, *args, **kwargs):
         queryset_object = self.queryset.filter(user=request.user.pk)
@@ -62,6 +65,16 @@ class AssetSet(BaseModelSet):
 
     queryset = model_class.objects.select_related().all()
 
+    @action(methods=["get"], detail=True)
+    def incoming(self, request, pk):
+        incomes = IncomeTransaction.objects.select_related().filter(asset=pk)
+        return Response(IncomeTransactionSerializer(incomes, many=True).data)
+
+    @action(methods=["get"], detail=True)
+    def outgoing(self, request, pk):
+        expenses = ExpenseTransaction.objects.select_related().filter(asset=pk)
+        return Response(ExpenseTransactionSerializer(expenses, many=True).data)
+
 
 class IncomeSet(BaseModelSet):
     model_class = IncomeSource
@@ -75,6 +88,13 @@ class ExpenseSet(BaseModelSet):
     serializer_class = IncomeSerializer
 
     queryset = model_class.objects.select_related().all()
+
+    @action(methods=["get"], detail=True)
+    def incoming(self, request, pk):
+        expenses = ExpenseTransaction.objects.select_related().filter(
+            expense=pk
+        )
+        return Response(ExpenseTransactionSerializer(expenses, many=True).data)
 
 
 class BaseModelTransactionSet(
