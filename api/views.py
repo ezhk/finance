@@ -13,6 +13,7 @@ from main.models import (
     ExpenseTransaction,
 )
 from api.exceptions import NotFoundException, BadRequestException
+from api.paginations import PaginationMixin
 from api.permissions import IsAuthenticated, IsOwner
 from api.serializers import (
     AssetSerializer,
@@ -23,7 +24,7 @@ from api.serializers import (
 )
 
 
-class BaseModelSet(viewsets.ModelViewSet):
+class BaseModelSet(viewsets.ModelViewSet, PaginationMixin):
     model_class = None
     serializer_class = None
 
@@ -56,45 +57,12 @@ class BaseModelSet(viewsets.ModelViewSet):
         queryset_object = self.queryset.filter(user=request.user.pk)
         if not queryset_object:
             raise NotFoundException()
-        return Response(self.serializer_class(queryset_object, many=True).data)
+        page = self.paginate_queryset(self.queryset)
+        if page is None:
+            raise NotFoundException()
 
-
-class AssetSet(BaseModelSet):
-    model_class = Asset
-    serializer_class = AssetSerializer
-
-    queryset = model_class.objects.select_related().all()
-
-    @action(methods=["get"], detail=True)
-    def incoming(self, request, pk):
-        incomes = IncomeTransaction.objects.select_related().filter(asset=pk)
-        return Response(IncomeTransactionSerializer(incomes, many=True).data)
-
-    @action(methods=["get"], detail=True)
-    def outgoing(self, request, pk):
-        expenses = ExpenseTransaction.objects.select_related().filter(asset=pk)
-        return Response(ExpenseTransactionSerializer(expenses, many=True).data)
-
-
-class IncomeSet(BaseModelSet):
-    model_class = IncomeSource
-    serializer_class = IncomeSerializer
-
-    queryset = model_class.objects.select_related().all()
-
-
-class ExpenseSet(BaseModelSet):
-    model_class = ExpenseCategory
-    serializer_class = IncomeSerializer
-
-    queryset = model_class.objects.select_related().all()
-
-    @action(methods=["get"], detail=True)
-    def incoming(self, request, pk):
-        expenses = ExpenseTransaction.objects.select_related().filter(
-            expense=pk
-        )
-        return Response(ExpenseTransactionSerializer(expenses, many=True).data)
+        serializer = self.serializer_class(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
 
 class BaseModelTransactionSet(
@@ -103,6 +71,7 @@ class BaseModelTransactionSet(
     mixins.RetrieveModelMixin,
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
+    PaginationMixin,
 ):
     permission_classes = [IsAuthenticated]
 
@@ -149,7 +118,11 @@ class BaseModelTransactionSet(
         )
         if not queryset_object:
             raise NotFoundException()
-        return Response(self.serializer_class(queryset_object, many=True).data)
+        page = self.paginate_queryset(queryset_object)
+        if page is None:
+            raise NotFoundException()
+        serializer = self.serializer_class(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
     def retrieve(self, request, pk):
         obj = self.queryset.filter(
@@ -170,6 +143,52 @@ class BaseModelTransactionSet(
         if not obj:
             raise NotFoundException()
         return super().destroy(request, pk)
+
+
+class AssetSet(BaseModelSet):
+    model_class = Asset
+    serializer_class = AssetSerializer
+
+    queryset = model_class.objects.select_related().all()
+
+    @action(methods=["get"], detail=True)
+    def incoming(self, request, pk):
+        incomes = IncomeTransaction.objects.select_related().filter(asset=pk)
+        page = self.paginate_queryset(incomes)
+        if page is None:
+            raise NotFoundException()
+        serializer = IncomeTransactionSerializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
+
+    @action(methods=["get"], detail=True)
+    def outgoing(self, request, pk):
+        expenses = ExpenseTransaction.objects.select_related().filter(asset=pk)
+        page = self.paginate_queryset(expenses)
+        if page is None:
+            raise NotFoundException()
+        serializer = ExpenseTransactionSerializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
+
+
+class IncomeSet(BaseModelSet):
+    model_class = IncomeSource
+    serializer_class = IncomeSerializer
+
+    queryset = model_class.objects.select_related().all()
+
+
+class ExpenseSet(BaseModelSet):
+    model_class = ExpenseCategory
+    serializer_class = IncomeSerializer
+
+    queryset = model_class.objects.select_related().all()
+
+    @action(methods=["get"], detail=True)
+    def incoming(self, request, pk):
+        expenses = ExpenseTransaction.objects.select_related().filter(
+            expense=pk
+        )
+        return Response(ExpenseTransactionSerializer(expenses, many=True).data)
 
 
 class IncomeTransactionSet(BaseModelTransactionSet):

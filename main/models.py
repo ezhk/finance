@@ -115,6 +115,9 @@ class IncomeTransaction(models.Model):
             super().delete()
         return True
 
+    class Meta:
+        ordering = ("-created_at",)
+
 
 class ExpenseTransaction(models.Model):
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
@@ -151,3 +154,6 @@ class ExpenseTransaction(models.Model):
 
             super().delete()
         return True
+
+    class Meta:
+        ordering = ("-created_at",)
