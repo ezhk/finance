@@ -1,5 +1,9 @@
+from decimal import Decimal
+
+from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.utils import timezone
 
 from rest_framework import status, viewsets, mixins
 from rest_framework.decorators import action
@@ -22,6 +26,80 @@ from api.serializers import (
     IncomeTransactionSerializer,
     ExpenseTransactionSerializer,
 )
+
+
+class InformationSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Asset.objects.select_related().all()
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        """
+        Method return summary account information, that contains:
+        - assets and their balances
+        - incomes with summary operations for latest month
+        - expenses with summary operations for latest month
+
+        Heavy method with many SQL requests (8 requests),
+        of course "created_at" is an indexed field.
+        """
+
+        assets = self.queryset.filter(user=request.user)
+
+        # calculate incomes categories for a month
+        incomes = IncomeSource.objects.select_related().filter(
+            user=request.user
+        )
+        income_values = IncomeSerializer(incomes, many=True).data
+        income_balances = (
+            IncomeTransaction.objects.filter(
+                asset__user=request.user,
+                income__user=request.user,
+                created_at__year=timezone.now().year,
+                created_at__month=timezone.now().month,
+            )
+            .values("income")
+            .annotate(balance=Sum("amount"))
+            .order_by("income")
+        )
+        for v in income_values:
+            v.update(
+                income_balances.filter(income=v["pk"])
+                .values("balance")
+                .first()
+                or {"balance": Decimal("0")}
+            )
+
+        # calculate expense categories for a month
+        expenses = ExpenseCategory.objects.select_related().filter(
+            user=request.user
+        )
+        expense_values = ExpenseSerializer(expenses, many=True).data
+        expense_balances = (
+            ExpenseTransaction.objects.filter(
+                asset__user=request.user,
+                expense__user=request.user,
+                created_at__year=timezone.now().year,
+                created_at__month=timezone.now().month,
+            )
+            .values("expense")
+            .annotate(balance=Sum("amount"))
+            .order_by("expense")
+        )
+        for v in expense_values:
+            v.update(
+                expense_balances.filter(expense=v["pk"])
+                .values("balance")
+                .first()
+                or {"balance": Decimal("0")}
+            )
+
+        return Response(
+            {
+                "assets": AssetSerializer(assets, many=True).data,
+                "incomes": income_values,
+                "expenses": expense_values,
+            }
+        )
 
 
 class BaseModelSet(viewsets.ModelViewSet, PaginationMixin):
