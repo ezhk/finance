@@ -185,9 +185,7 @@ class BaseModelTransactionSet(
         setattr(transaction, self.to_field, to_qs)
         transaction.save()
 
-        return JsonResponse(
-            {"pk": transaction.pk}, status=status.HTTP_201_CREATED
-        )
+        return Response({"pk": transaction.pk}, status=status.HTTP_201_CREATED)
 
     def list(self, request, *args, **kwargs):
         queryset_object = self.queryset.filter(
@@ -210,7 +208,7 @@ class BaseModelTransactionSet(
         ).first()
         if not obj:
             raise NotFoundException()
-        return super().retrieve(request, pk)
+        return Response(self.serializer_class(obj).data)
 
     def destroy(self, request, pk):
         obj = self.queryset.filter(
