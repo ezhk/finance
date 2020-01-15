@@ -28,10 +28,6 @@ export default {
 </script>
 
 <style>
-#app {
-  min-width: 240px;
-}
-
 header,
 footer {
   margin: 5px 0 5px;
@@ -41,9 +37,10 @@ footer {
   border-radius: 5px;
   border: 0.5px solid darkgray;
 
-  align-items: center;
-
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  align-items: center;
+  min-width: 320px;
 }
 
 header {
@@ -77,10 +74,15 @@ footer > a {
 
 .container {
   margin: 0 auto;
+
   max-width: 1000px;
+  min-width: 320px;
+  min-height: 100%;
+
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+
+  padding: 0 5px;
 }
 
 .top {
