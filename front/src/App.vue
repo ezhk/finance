@@ -28,6 +28,10 @@ export default {
 </script>
 
 <style>
+#app {
+  min-width: 240px;
+}
+
 header,
 footer {
   margin: 5px 0 5px;
