@@ -76,18 +76,38 @@ class ExpenseCategory(models.Model):
     )
 
 
-class IncomeTransaction(models.Model):
+class AbstractTransaction(models.Model):
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
-    income = models.ForeignKey(IncomeSource, on_delete=models.CASCADE)
-
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     amount = models.DecimalField(
-        verbose_name="Income money amount",
+        verbose_name="Transaction maney amount",
         blank=False,
         default=0,
         max_digits=19,
         decimal_places=4,
     )
+
+    def inc_asset(value):
+        """
+        Increment asset balance on input value.
+        """
+        self.asset.balance += Decimal(value)
+        self.asset.save()
+
+    def dec_asset(value):
+        """
+        Decrement asset balance on input value.
+        """
+        self.asset.balance -= Decimal(value)
+        self.asset.save()
+
+    class Meta:
+        abstract = True
+        ordering = ("-created_at",)
+
+
+class IncomeTransaction(AbstractTransaction):
+    income = models.ForeignKey(IncomeSource, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         """
@@ -96,9 +116,7 @@ class IncomeTransaction(models.Model):
         """
 
         with transaction.atomic():
-            self.asset.balance += Decimal(self.amount)
-            self.asset.save()
-
+            self.inc_asset(self.amount)
             super().save(*args, **kwargs)
         return True
 
@@ -109,28 +127,13 @@ class IncomeTransaction(models.Model):
         """
 
         with transaction.atomic():
-            self.asset.balance -= Decimal(self.amount)
-            self.asset.save()
-
+            self.dec_asset(self.amount)
             super().delete()
         return True
 
-    class Meta:
-        ordering = ("-created_at",)
 
-
-class ExpenseTransaction(models.Model):
-    asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
+class ExpenseTransaction(AbstractTransaction):
     expense = models.ForeignKey(ExpenseCategory, on_delete=models.CASCADE)
-
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
-    amount = models.DecimalField(
-        verbose_name="Expense maney amount",
-        blank=False,
-        default=0,
-        max_digits=19,
-        decimal_places=4,
-    )
     tags = models.CharField(
         verbose_name="Comma separated transaction tags",
         max_length=4096,
@@ -141,19 +144,12 @@ class ExpenseTransaction(models.Model):
 
     def save(self, *args, **kwargs):
         with transaction.atomic():
-            self.asset.balance -= Decimal(self.amount)
-            self.asset.save()
-
+            self.dec_asset(self.amount)
             super().save(*args, **kwargs)
         return True
 
     def delete(self):
         with transaction.atomic():
-            self.asset.balance += Decimal(self.amount)
-            self.asset.save()
-
+            self.inc_asset(self.amount)
             super().delete()
         return True
-
-    class Meta:
-        ordering = ("-created_at",)
