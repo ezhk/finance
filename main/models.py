@@ -87,14 +87,14 @@ class AbstractTransaction(models.Model):
         decimal_places=4,
     )
 
-    def inc_asset(value):
+    def inc_asset(self, value):
         """
         Increment asset balance on input value.
         """
         self.asset.balance += Decimal(value)
         self.asset.save()
 
-    def dec_asset(value):
+    def dec_asset(self, value):
         """
         Decrement asset balance on input value.
         """
