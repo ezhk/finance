@@ -49,7 +49,6 @@ export default {
       passwordRepeat: "",
 
       getURL: methods.getURL,
-      getJSON: methods.getJSON,
       getCookie: methods.getCookie
     };
   },

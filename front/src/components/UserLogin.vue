@@ -87,7 +87,12 @@ export default {
           "X-CSRFToken": csrfToken
         }
       }).then(() => {
-        this.$parent.$refs.router.refreshData();
+        // Does function exist?
+        const refreshDataFunc = this.$parent.$refs.router.refreshData;
+        if (typeof refreshDataFunc === "function") {
+          refreshDataFunc();
+        }
+
         this.getUserInfo();
       });
     },
@@ -101,7 +106,12 @@ export default {
           "X-CSRFToken": csrfToken
         }
       }).then(() => {
-        this.$parent.$refs.router.refreshData();
+        // Does function exist?
+        const refreshDataFunc = this.$parent.$refs.router.refreshData;
+        if (typeof refreshDataFunc === "function") {
+          refreshDataFunc();
+        }
+
         this.getUserInfo();
       });
     }
