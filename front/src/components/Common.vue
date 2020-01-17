@@ -51,8 +51,11 @@ export default {
     };
   },
 
-  mounted() {
-    this.getCommonInfo();
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      console.log(vm);
+      vm.refreshData();
+    });
   },
 
   methods: {

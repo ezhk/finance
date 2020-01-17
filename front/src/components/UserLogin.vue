@@ -87,11 +87,9 @@ export default {
           "X-CSRFToken": csrfToken
         }
       }).then(() => {
-        // Does function exist?
+        // Does function refreshData exist?
         const refreshDataFunc = this.$parent.$refs.router.refreshData;
-        if (typeof refreshDataFunc === "function") {
-          refreshDataFunc();
-        }
+        if (typeof refreshDataFunc === "function") refreshDataFunc();
 
         this.getUserInfo();
       });
@@ -106,11 +104,9 @@ export default {
           "X-CSRFToken": csrfToken
         }
       }).then(() => {
-        // Does function exist?
+        // Does function refreshData exist?
         const refreshDataFunc = this.$parent.$refs.router.refreshData;
-        if (typeof refreshDataFunc === "function") {
-          refreshDataFunc();
-        }
+        if (typeof refreshDataFunc === "function") refreshDataFunc();
 
         this.getUserInfo();
       });
