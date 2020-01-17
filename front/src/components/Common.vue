@@ -45,7 +45,9 @@ export default {
       expenses: null,
 
       getURL: methods.getURL,
-      getJSON: methods.getJSON
+      getJSON: methods.getJSON,
+      resetInitData: methods.resetInitData,
+      limitWordLength: methods.limitWordLength
     };
   },
 
@@ -62,19 +64,9 @@ export default {
       });
     },
 
-    /**
-     * Function slice each word in string.
-     * @param inputString, {string} - input string
-     * @param wordLimit, {integer} - word length limit
-     */
-    limitWordLength(inputString, wordLimit = 9) {
-      let words = inputString.split(/\s+/);
-      const res = words
-        .map(w =>
-          w.length >= wordLimit + 1 ? `${w.slice(0, wordLimit)}\u2026` : w
-        )
-        .join(" ");
-      return res;
+    refreshData() {
+      this.resetInitData();
+      this.getCommonInfo();
     }
   }
 };

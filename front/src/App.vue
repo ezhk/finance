@@ -7,7 +7,7 @@
 
     <div class="top">
       <keep-alive>
-        <router-view :key="$route.fullPath"></router-view>
+        <router-view :key="$route.fullPath" ref="router"></router-view>
       </keep-alive>
     </div>
     <footer class="site-footer">
@@ -50,12 +50,13 @@ header {
   justify-content: space-between;
 
   padding-left: 15px;
-
-  font-size: 1.3rem;
-  font-family: monospace;
-  color: goldenrod;
 }
 
+.header-title {
+  font-size: 1.3rem;
+  font-family: monospace;
+  color: goldenrod !important;
+}
 .header-title:any-link {
   color: unset;
   text-decoration: none;

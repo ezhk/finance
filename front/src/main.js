@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 
 import App from './App.vue';
 import Common from './components/Common.vue';
+import UserCreate from './components/UserCreate.vue';
 
 Vue.config.productionTip = false;
 
@@ -14,6 +15,11 @@ const router = new VueRouter({
       path: '/',
       component: Common,
     },
+
+    {
+      path: '/user/create',
+      component: UserCreate,
+    }
   ],
 });
 
