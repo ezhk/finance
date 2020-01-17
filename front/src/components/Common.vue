@@ -1,33 +1,42 @@
 <template>
   <div class="common">
-    <div class="incomes">
-      <div v-for="income in incomes" :key="income.pk" class="category">
-        <div class="category-name">{{limitWordLength(income.description)}}</div>
-        <div class="category-balance">{{income.balance}}₽</div>
+    <div class="category-block">
+      <div class="incomes">
+        <div v-for="income in incomes" :key="income.pk" class="category">
+          <div class="category-name">{{limitWordLength(income.description)}}</div>
+          <div class="category-balance">{{parseFloat(income.balance).toFixed(2)}}₽</div>
+        </div>
+        <div class="category">
+          <div class="category-name category-add">&#65291;</div>
+        </div>
       </div>
-      <div class="category">
-        <div class="category-name category-add">&#65291;</div>
-      </div>
+      <div class="category-type">Incomes</div>
     </div>
     <div class="arrow">&#x203A;</div>
-    <div class="assets">
-      <div v-for="asset in assets" :key="asset.pk" class="category">
-        <div class="category-name">{{limitWordLength(asset.description)}}</div>
-        <div class="category-balance">{{asset.balance}}₽</div>
+    <div class="category-block">
+      <div class="assets">
+        <div v-for="asset in assets" :key="asset.pk" class="category">
+          <div class="category-name">{{limitWordLength(asset.description)}}</div>
+          <div class="category-balance">{{parseFloat(asset.balance).toFixed(2)}}₽</div>
+        </div>
+        <div class="category">
+          <div class="category-name category-add">&#65291;</div>
+        </div>
       </div>
-      <div class="category">
-        <div class="category-name category-add">&#65291;</div>
-      </div>
+      <div class="category-type">Assets</div>
     </div>
     <div class="arrow">&#x203A;</div>
-    <div class="expenses">
-      <div v-for="expense in expenses" :key="expense.pk" class="category">
-        <div class="category-name">{{limitWordLength(expense.description)}}</div>
-        <div class="category-balance">{{expense.balance}}₽</div>
+    <div class="category-block">
+      <div class="expenses">
+        <div v-for="expense in expenses" :key="expense.pk" class="category">
+          <div class="category-name">{{limitWordLength(expense.description)}}</div>
+          <div class="category-balance">{{parseFloat(expense.balance).toFixed(2)}}₽</div>
+        </div>
+        <div class="category">
+          <div class="category-name category-add">&#65291;</div>
+        </div>
       </div>
-      <div class="category">
-        <div class="category-name category-add">&#65291;</div>
-      </div>
+      <div class="category-type">Expenses</div>
     </div>
   </div>
 </template>
@@ -52,10 +61,7 @@ export default {
   },
 
   beforeRouteEnter(to, from, next) {
-    next(vm => {
-      console.log(vm);
-      vm.refreshData();
-    });
+    next(vm => vm.refreshData());
   },
 
   methods: {
@@ -84,9 +90,7 @@ export default {
   /* filter: blur(3px); */
 }
 
-.incomes,
-.assets,
-.expenses {
+.category-block {
   display: flex;
   flex-direction: column;
 
@@ -94,6 +98,21 @@ export default {
   border-radius: 5px;
 
   margin: 5px;
+  align-content: space-between;
+}
+.category-type {
+  font-weight: 300;
+  font-size: 0.5rem;
+  text-align: center;
+}
+
+.incomes,
+.assets,
+.expenses {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
 }
 .expenses {
   flex-direction: row;
