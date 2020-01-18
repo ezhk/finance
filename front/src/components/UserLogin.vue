@@ -28,7 +28,6 @@
           </div>
           <div class="auth-buttons">
             <router-link class="btn btn-light" to="/user/create">Sign up</router-link>
-            <!-- <button class="btn btn-light">Sign up</button> -->
             <button class="btn btn-light" @click.prevent="loginUser">Login</button>
           </div>
         </form>

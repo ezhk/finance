@@ -255,7 +255,7 @@ class IncomeSet(BaseModelSet):
 
 class ExpenseSet(BaseModelSet):
     model_class = ExpenseCategory
-    serializer_class = IncomeSerializer
+    serializer_class = ExpenseSerializer
 
     queryset = model_class.objects.select_related().all()
 

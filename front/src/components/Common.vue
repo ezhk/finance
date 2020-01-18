@@ -1,12 +1,17 @@
 <template>
-  <div class="common">
+  <div id="common" class="common">
+    <income-create v-show="showIncomeCreate"></income-create>
+    <asset-create v-show="showAssetCreate"></asset-create>
+    <asset-detail v-if="showAssetDetail" :asset-pk="showAssetDetail" :incomes="incomes"></asset-detail>
+    <expense-create v-show="showExpenseCreate"></expense-create>
+
     <div class="category-block">
       <div class="incomes">
         <div v-for="income in incomes" :key="income.pk" class="category">
           <div class="category-name">{{limitWordLength(income.description)}}</div>
           <div class="category-balance">{{parseFloat(income.balance).toFixed(2)}}₽</div>
         </div>
-        <div class="category">
+        <div class="category" @click.prevent="showPopups('showIncomeCreate')">
           <div class="category-name category-add">&#65291;</div>
         </div>
       </div>
@@ -15,11 +20,16 @@
     <div class="arrow">&#x203A;</div>
     <div class="category-block">
       <div class="assets">
-        <div v-for="asset in assets" :key="asset.pk" class="category">
+        <div
+          v-for="asset in assets"
+          :key="asset.pk"
+          class="category"
+          @click.prevent="showPopups('showAssetDetail', asset.pk)"
+        >
           <div class="category-name">{{limitWordLength(asset.description)}}</div>
           <div class="category-balance">{{parseFloat(asset.balance).toFixed(2)}}₽</div>
         </div>
-        <div class="category">
+        <div class="category" @click.prevent="showPopups('showAssetCreate')">
           <div class="category-name category-add">&#65291;</div>
         </div>
       </div>
@@ -30,9 +40,12 @@
       <div class="expenses">
         <div v-for="expense in expenses" :key="expense.pk" class="category">
           <div class="category-name">{{limitWordLength(expense.description)}}</div>
-          <div class="category-balance">{{parseFloat(expense.balance).toFixed(2)}}₽</div>
+          <div class="category-balance">
+            {{parseFloat(expense.balance).toFixed(2)}}₽
+            <div v-if="expense.monthly_limit" class="category-limit">{{expense.monthly_limit}}₽</div>
+          </div>
         </div>
-        <div class="category">
+        <div class="category" @click.prevent="showPopups('showExpenseCreate')">
           <div class="category-name category-add">&#65291;</div>
         </div>
       </div>
@@ -43,15 +56,35 @@
 
 <script>
 import methods from "../methods.js";
+import IncomeCreate from "./IncomeCreate.vue";
+import AssetCreate from "./AssetCreate.vue";
+import AssetDetail from "./AssetDetail.vue";
+import ExpenseCreate from "./ExpenseCreate.vue";
 
 export default {
   name: "Common",
+
+  components: {
+    IncomeCreate,
+    AssetCreate,
+    AssetDetail,
+    ExpenseCreate
+  },
 
   data() {
     return {
       incomes: null,
       assets: null,
       expenses: null,
+
+      showIncomeCreate: false,
+      showIncomeDetail: null,
+
+      showAssetCreate: false,
+      showAssetDetail: null,
+
+      showExpenseCreate: false,
+      showExpenseDetail: null,
 
       getURL: methods.getURL,
       getJSON: methods.getJSON,
@@ -76,6 +109,33 @@ export default {
     refreshData() {
       this.resetInitData();
       this.getCommonInfo();
+    },
+
+    showPopups(variable, value = true) {
+      document
+        .querySelectorAll(".category-block, .arrow")
+        .forEach(function(currentValue) {
+          currentValue.classList.add("show-popup");
+        });
+
+      this[variable] = value;
+    },
+
+    hidePopups() {
+      document
+        .querySelectorAll(".category-block, .arrow")
+        .forEach(function(currentValue) {
+          currentValue.classList.remove("show-popup");
+        });
+
+      this.showIncomeCreate = false;
+      this.showIncomeDetail = null;
+
+      this.showAssetCreate = false;
+      this.showAssetDetail = null;
+
+      this.showExpenseCreate = false;
+      this.showExpenseDetail = null;
     }
   }
 };
@@ -172,5 +232,13 @@ export default {
 }
 .category-name {
   font-weight: 500;
+}
+.category-limit {
+  font-size: 0.5rem !important;
+  color: darkgray;
+}
+
+.show-popup {
+  filter: blur(3px);
 }
 </style>
