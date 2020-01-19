@@ -2,7 +2,12 @@
   <div id="common" class="common">
     <income-create v-show="showIncomeCreate"></income-create>
     <asset-create v-show="showAssetCreate"></asset-create>
-    <asset-detail v-if="showAssetDetail" :asset-pk="showAssetDetail" :incomes="incomes"></asset-detail>
+    <asset-detail
+      v-if="showAssetDetail"
+      :asset-pk="showAssetDetail"
+      :incomes="incomes"
+      :expenses="expenses"
+    ></asset-detail>
     <expense-create v-show="showExpenseCreate"></expense-create>
 
     <div class="category-block">

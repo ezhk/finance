@@ -51,7 +51,7 @@
             step="0.01"
             class="form-control"
             id="amount"
-            v-model="transactionAmount"
+            v-model="inTransactionAmount"
             placeholder="Amount"
             required
           />
@@ -90,10 +90,31 @@
     </div>
 
     <!-- Outgoing transactions block -->
-    <div v-show="outgoingTransactions.length">
+    <div>
       <hr />
-      <h6 class="subheader">Outgoing transactions history</h6>
-      <table class="table table-borderless">
+
+      <h6 class="subheader">Outgoing transactions</h6>
+      <form>
+        <div class="form-group">
+          <input
+            type="number"
+            step="0.01"
+            class="form-control"
+            id="amount"
+            v-model="outTransactionAmount"
+            placeholder="Amount"
+            required
+          />
+        </div>
+        <select class="form-control" id="source" v-model="transactionDestination">
+          <option v-for="option in expenses" :key="option" :value="option.pk">{{option.description}}</option>
+        </select>
+        <div class="category-add-buttons">
+          <button class="btn btn-secondary" @click.prevent="createOutgoingTransaction">Create</button>
+        </div>
+      </form>
+
+      <table v-show="outgoingTransactions.length" class="table table-borderless">
         <thead>
           <tr>
             <th></th>
@@ -125,7 +146,7 @@ import methods from "../methods.js";
 
 export default {
   name: "AssetDetail",
-  props: ["assetPk", "incomes"],
+  props: ["assetPk", "incomes", "expenses"],
 
   data() {
     return {
@@ -217,7 +238,7 @@ export default {
       const body = JSON.stringify({
         asset: { pk: this.assetPk },
         income: { pk: this.transactionSource },
-        amount: parseFloat(this.transactionAmount)
+        amount: parseFloat(this.inTransactionAmount)
       });
 
       fetch(url, {
@@ -231,9 +252,8 @@ export default {
       }).then(response => {
         if (response.status != 201) return;
 
-        this.transactionAmount = null;
+        this.inTransactionAmount = null;
         this.updateAssetData();
-        this.getIncomingTransactions();
         this.$parent.getCommonInfo();
       });
     },
@@ -252,7 +272,6 @@ export default {
         if (response.status != 204) return;
 
         this.updateAssetData();
-        this.getIncomingTransactions();
         this.$parent.getCommonInfo();
       });
     },
@@ -260,6 +279,32 @@ export default {
     getOutgoingTransactions() {
       this.getJSON(this.getURL("outgoingAsset", this.assetPk)).then(data => {
         this.outgoingTransactions = data.results;
+      });
+    },
+
+    createOutgoingTransaction() {
+      const url = this.getURL("createExpenseTransaction", this.assetPk);
+      const csrfToken = this.getCookie("csrftoken");
+      const body = JSON.stringify({
+        asset: { pk: this.assetPk },
+        expense: { pk: this.transactionDestination },
+        amount: parseFloat(this.outTransactionAmount)
+      });
+
+      fetch(url, {
+        credentials: "include",
+        body,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken
+        }
+      }).then(response => {
+        if (response.status != 201) return;
+
+        this.outTransactionAmount = null;
+        this.updateAssetData();
+        this.$parent.getCommonInfo();
       });
     },
 
@@ -278,7 +323,6 @@ export default {
         if (response.status != 204) return;
 
         this.updateAssetData();
-        this.getOutgoingTransactions();
         this.$parent.getCommonInfo();
       });
     },
