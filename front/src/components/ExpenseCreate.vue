@@ -94,4 +94,8 @@ export default {
   display: flex;
   justify-content: space-around;
 }
+
+.btn {
+  width: 80px !important;
+}
 </style>

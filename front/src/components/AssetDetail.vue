@@ -1,7 +1,11 @@
 <template>
   <div class="category-add">
-    <h5>Asset Detail</h5>
-    <div class="subheader">Description</div>
+    <div class="category-add-buttons">
+      <h5>Asset Detail</h5>
+      <button class="btn btn-dark btn-close" @click.prevent="closeBlock">Close</button>
+    </div>
+
+    <h6 class="subheader">Description</h6>
     <form>
       <div class="form-group">
         <input
@@ -30,82 +34,89 @@
         <option value="CC">Credit card</option>
       </select>
       <div class="category-add-buttons">
-        <button class="btn btn-light" @click.prevent="updateAsset">Update</button>
-        <button class="btn btn-light" @click.prevent="closeBlock">Close</button>
+        <button class="btn btn-danger" @click.prevent="deleteAsset">Delete</button>
+        <button class="btn btn-secondary" @click.prevent="updateAsset">Update</button>
       </div>
     </form>
-    <hr />
-    <div class="subheader">Transaction</div>
-    <form>
-      <div class="form-group">
-        <input
-          type="number"
-          step="0.01"
-          class="form-control"
-          id="amount"
-          v-model="transactionAmount"
-          placeholder="Amount"
-          required
-        />
-      </div>
-      <select class="form-control" id="source" v-model="transactionSource">
-        <option v-for="option in incomes" :key="option">{{option.description}}</option>
-      </select>
-      <div class="category-add-buttons">
-        <button class="btn btn-light" @click.prevent="createAsset">Add transaction</button>
-        <button class="btn btn-light" @click.prevent="closeBlock">Close</button>
-      </div>
-    </form>
-    <hr />
-    <div class="subheader">Incoming transactions history</div>
-    <table class="table">
-      <thead>
-        <tr>
-          <th></th>
-          <th scope="col">Source</th>
-          <th scope="col">Amount</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="transaction in incomingTransactions" :key="transaction.id">
-          <td>
-            <button
-              class="btn btn-light"
-              @click.prevent="deleteIncomingTransaction(transaction.id)"
-            >&#9850;</button>
-          </td>
-          <td>{{transaction.income.description}}</td>
-          <td>{{transaction.amount}}</td>
-          <td style="color: green">&#8592;</td>
-        </tr>
-      </tbody>
-    </table>
-    <hr />
-    <div class="subheader">Outgoing transactions history</div>
-    <table class="table">
-      <thead>
-        <tr>
-          <th></th>
-          <th scope="col">Destination</th>
-          <th scope="col">Amount</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="transaction in outgoingTransactions" :key="transaction.id">
-          <td>
-            <button
-              class="btn btn-light"
-              @click.prevent="deleteOutgoingTransaction(transaction.id)"
-            >&#9850;</button>
-          </td>
-          <td>{{transaction.expense.description}}</td>
-          <td>{{transaction.amount}}</td>
-          <td style="color: red">&#8594;</td>
-        </tr>
-      </tbody>
-    </table>
+
+    <!-- Incoming transactions block -->
+    <div>
+      <hr />
+
+      <h6 class="subheader">Incoming transactions</h6>
+      <form>
+        <div class="form-group">
+          <input
+            type="number"
+            step="0.01"
+            class="form-control"
+            id="amount"
+            v-model="transactionAmount"
+            placeholder="Amount"
+            required
+          />
+        </div>
+        <select class="form-control" id="source" v-model="transactionSource">
+          <option v-for="option in incomes" :key="option" :value="option.pk">{{option.description}}</option>
+        </select>
+        <div class="category-add-buttons">
+          <button class="btn btn-secondary" @click.prevent="createIncomeTransaction">Create</button>
+        </div>
+      </form>
+
+      <table v-show="incomingTransactions.length" class="table table-borderless">
+        <thead>
+          <tr>
+            <th></th>
+            <th scope="col">Source</th>
+            <th scope="col">Amount</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="transaction in incomingTransactions" :key="transaction.id">
+            <td>
+              <button
+                class="btn btn-light"
+                @click.prevent="deleteIncomingTransaction(transaction.id)"
+              >&#9850;</button>
+            </td>
+            <td>{{transaction.income.description}}</td>
+            <td>{{transaction.amount}}</td>
+            <td style="color: green">&#8592;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Outgoing transactions block -->
+    <div v-show="outgoingTransactions.length">
+      <hr />
+      <h6 class="subheader">Outgoing transactions history</h6>
+      <table class="table table-borderless">
+        <thead>
+          <tr>
+            <th></th>
+            <th scope="col">Destination</th>
+            <th scope="col">Amount</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="transaction in outgoingTransactions" :key="transaction.id">
+            <td>
+              <button
+                class="btn btn-light"
+                @click.prevent="deleteOutgoingTransaction(transaction.id)"
+              >&#9850;</button>
+            </td>
+            <td>{{transaction.expense.description}}</td>
+            <td>{{transaction.amount}}</td>
+            <td style="color: red">&#8594;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -137,6 +148,24 @@ export default {
   },
 
   methods: {
+    deleteAsset() {
+      const url = this.getURL("detailAsset", this.assetPk);
+      const csrfToken = this.getCookie("csrftoken");
+      fetch(url, {
+        credentials: "include",
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken
+        }
+      }).then(response => {
+        if (response.status != 204) return;
+
+        this.$parent.refreshData();
+        this.$parent.hidePopups();
+      });
+    },
+
     updateAsset() {
       const url = this.getURL("detailAsset", this.assetPk);
       const csrfToken = this.getCookie("csrftoken");
@@ -182,6 +211,33 @@ export default {
       });
     },
 
+    createIncomeTransaction() {
+      const url = this.getURL("createIncomeTransaction", this.assetPk);
+      const csrfToken = this.getCookie("csrftoken");
+      const body = JSON.stringify({
+        asset: { pk: this.assetPk },
+        income: { pk: this.transactionSource },
+        amount: parseFloat(this.transactionAmount)
+      });
+
+      fetch(url, {
+        credentials: "include",
+        body,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken
+        }
+      }).then(response => {
+        if (response.status != 201) return;
+
+        this.transactionAmount = null;
+        this.updateAssetData();
+        this.getIncomingTransactions();
+        this.$parent.getCommonInfo();
+      });
+    },
+
     deleteIncomingTransaction(transactionID) {
       const url = this.getURL("detailIncomeTransaction", transactionID);
       const csrfToken = this.getCookie("csrftoken");
@@ -194,7 +250,10 @@ export default {
         }
       }).then(response => {
         if (response.status != 204) return;
+
+        this.updateAssetData();
         this.getIncomingTransactions();
+        this.$parent.getCommonInfo();
       });
     },
 
@@ -217,7 +276,10 @@ export default {
         }
       }).then(response => {
         if (response.status != 204) return;
+
+        this.updateAssetData();
         this.getOutgoingTransactions();
+        this.$parent.getCommonInfo();
       });
     },
 
@@ -244,11 +306,12 @@ export default {
   text-align: center;
   overflow-y: scroll;
 
-  max-height: 90%;
+  /* max-height: 90%; */
+  height: 90%;
 }
 
 .category-add-buttons {
-  margin-top: 5px;
+  margin: 5px 0 5px 0;
   display: flex;
   justify-content: space-around;
 }
@@ -260,5 +323,12 @@ export default {
 table td {
   padding: 0.5rem !important;
   vertical-align: baseline !important;
+}
+
+.btn-close {
+  position: fixed;
+  bottom: 7%;
+  opacity: 0.7;
+  width: 150px;
 }
 </style>
