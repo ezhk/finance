@@ -61,7 +61,11 @@
           <div class="category-name">{{limitWordLength(expense.description)}}</div>
           <div class="category-balance">
             {{parseFloat(expense.balance).toFixed(2)}}₽
-            <div v-if="expense.monthly_limit" class="category-limit">{{expense.monthly_limit}}₽</div>
+            <div
+              v-if="expense.monthly_limit"
+              class="category-limit"
+              :class="getExpenseLimitColor(expense.balance, expense.monthly_limit)"
+            >{{expense.monthly_limit}}₽</div>
           </div>
         </div>
         <div class="category" @click.prevent="showPopups('showExpenseCreate')">
@@ -121,6 +125,14 @@ export default {
   },
 
   methods: {
+    getExpenseLimitColor(currentValue, limit) {
+      const level = currentValue / limit;
+
+      if (level >= 0.8) return "text-danger";
+      if (level >= 0.5) return "text-warning";
+      return "text-secondary";
+    },
+
     getCommonInfo() {
       this.getJSON(this.getURL("commonInfo")).then(data => {
         this.incomes = data.incomes;
@@ -169,8 +181,6 @@ export default {
   display: flex;
   align-content: space-around;
   justify-content: center;
-
-  /* filter: blur(3px); */
 }
 
 .category-block {
@@ -258,7 +268,6 @@ export default {
 }
 .category-limit {
   font-size: 0.5rem !important;
-  color: darkgray;
 }
 
 .show-popup {
