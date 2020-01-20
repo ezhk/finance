@@ -38,6 +38,8 @@ export default {
         return "/api/incomes/";
       case "detailIncome":
         return `/api/incomes/${param}/`;
+      case "outgoingIncome":
+        return `/api/incomes/${param}/outgoing/`;
 
       case "createExpense":
         return "/api/expenses/";

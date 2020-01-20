@@ -6,7 +6,7 @@
         <input
           type="text"
           class="form-control"
-          id="name"
+          id="asset-create-name"
           v-model="assetName"
           placeholder="Name"
           required
@@ -17,13 +17,13 @@
           type="number"
           step="0.01"
           class="form-control"
-          id="balance"
+          id="asset-create-balance"
           v-model="assetBalance"
           placeholder="Balance"
           required
         />
       </div>
-      <select class="form-control" id="type" v-model="assetType">
+      <select class="form-control" id="asset-create-type" v-model="assetType">
         <option value="CA" selected="selected">Cash</option>
         <option value="BC">Bank card</option>
         <option value="CC">Credit card</option>

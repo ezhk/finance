@@ -1,6 +1,8 @@
 <template>
   <div id="common" class="common">
     <income-create v-show="showIncomeCreate"></income-create>
+    <income-detail v-if="showIncomeDetail" :income-pk="showIncomeDetail" :assets="assets"></income-detail>
+
     <asset-create v-show="showAssetCreate"></asset-create>
     <asset-detail
       v-if="showAssetDetail"
@@ -8,11 +10,18 @@
       :incomes="incomes"
       :expenses="expenses"
     ></asset-detail>
+
     <expense-create v-show="showExpenseCreate"></expense-create>
+    <expense-detail v-if="showExpenseDetail" :expense-pk="showExpenseDetail" :assets="assets"></expense-detail>
 
     <div class="category-block">
       <div class="incomes">
-        <div v-for="income in incomes" :key="income.pk" class="category">
+        <div
+          v-for="income in incomes"
+          :key="income.pk"
+          class="category"
+          @click.prevent="showPopups('showIncomeDetail', income.pk)"
+        >
           <div class="category-name">{{limitWordLength(income.description)}}</div>
           <div class="category-balance">{{parseFloat(income.balance).toFixed(2)}}₽</div>
         </div>
@@ -43,7 +52,12 @@
     <div class="arrow">&#x203A;</div>
     <div class="category-block">
       <div class="expenses">
-        <div v-for="expense in expenses" :key="expense.pk" class="category">
+        <div
+          v-for="expense in expenses"
+          :key="expense.pk"
+          class="category"
+          @click.prevent="showPopups('showExpenseDetail', expense.pk)"
+        >
           <div class="category-name">{{limitWordLength(expense.description)}}</div>
           <div class="category-balance">
             {{parseFloat(expense.balance).toFixed(2)}}₽
@@ -62,18 +76,22 @@
 <script>
 import methods from "../methods.js";
 import IncomeCreate from "./IncomeCreate.vue";
+import IncomeDetail from "./IncomeDetail.vue";
 import AssetCreate from "./AssetCreate.vue";
 import AssetDetail from "./AssetDetail.vue";
 import ExpenseCreate from "./ExpenseCreate.vue";
+import ExpenseDetail from "./ExpenseDetail.vue";
 
 export default {
   name: "Common",
 
   components: {
     IncomeCreate,
+    IncomeDetail,
     AssetCreate,
     AssetDetail,
-    ExpenseCreate
+    ExpenseCreate,
+    ExpenseDetail
   },
 
   data() {

@@ -3,14 +3,20 @@
     <h6>Create expense</h6>
     <form>
       <div class="form-group">
-        <input type="text" class="form-control" id="name" v-model="expenseName" placeholder="Name" />
+        <input
+          type="text"
+          class="form-control"
+          id="expense-create-name"
+          v-model="expenseName"
+          placeholder="Name"
+        />
       </div>
       <div class="form-group">
         <input
           type="number"
           step="0.01"
           class="form-control"
-          id="monthly-limit"
+          id="expense-create-monthly-limit"
           v-model="expenseMonthlyLimit"
           placeholder="Monthly limit"
         />

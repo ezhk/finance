@@ -3,7 +3,13 @@
     <h6>Create income</h6>
     <form>
       <div class="form-group">
-        <input type="text" class="form-control" id="name" v-model="incomeName" placeholder="Name" />
+        <input
+          type="text"
+          class="form-control"
+          id="income-create-name"
+          v-model="incomeName"
+          placeholder="Name"
+        />
       </div>
       <div class="category-add-buttons">
         <button class="btn btn-light" @click.prevent="createIncome">Create</button>

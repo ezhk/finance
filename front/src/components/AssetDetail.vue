@@ -5,13 +5,14 @@
       <button class="btn btn-dark btn-close" @click.prevent="closeBlock">Close</button>
     </div>
 
+    <!-- Edit category block -->
     <h6 class="subheader">Description</h6>
     <form>
       <div class="form-group">
         <input
           type="text"
           class="form-control"
-          id="name"
+          id="asset-detail-name"
           v-model="assetName"
           placeholder="Name"
           required
@@ -22,13 +23,13 @@
           type="number"
           step="0.01"
           class="form-control"
-          id="balance"
+          id="asset-detail-balance"
           v-model="assetBalance"
           placeholder="Balance"
           required
         />
       </div>
-      <select class="form-control" id="type" v-model="assetType">
+      <select class="form-control" id="asset-detail-type" v-model="assetType">
         <option value="CA" selected="selected">Cash</option>
         <option value="BC">Bank card</option>
         <option value="CC">Credit card</option>
@@ -50,14 +51,14 @@
             type="number"
             step="0.01"
             class="form-control"
-            id="amount"
+            id="asset-detail-incoming-amount"
             v-model="inTransactionAmount"
             placeholder="Amount"
             required
           />
         </div>
-        <select class="form-control" id="source" v-model="transactionSource">
-          <option v-for="option in incomes" :key="option" :value="option.pk">{{option.description}}</option>
+        <select class="form-control" id="asset-detail-incoming-source" v-model="transactionSource">
+          <option v-for="inc in incomes" :key="inc.pk" :value="inc.pk">{{inc.description}}</option>
         </select>
         <div class="category-add-buttons">
           <button class="btn btn-secondary" @click.prevent="createIncomeTransaction">Create</button>
@@ -100,14 +101,18 @@
             type="number"
             step="0.01"
             class="form-control"
-            id="amount"
+            id="asset-detail-outgoung-amount"
             v-model="outTransactionAmount"
             placeholder="Amount"
             required
           />
         </div>
-        <select class="form-control" id="source" v-model="transactionDestination">
-          <option v-for="option in expenses" :key="option" :value="option.pk">{{option.description}}</option>
+        <select
+          class="form-control"
+          id="asset-detail-outgoung-source"
+          v-model="transactionDestination"
+        >
+          <option v-for="exp in expenses" :key="exp.pk" :value="exp.pk">{{exp.description}}</option>
         </select>
         <div class="category-add-buttons">
           <button class="btn btn-secondary" @click.prevent="createOutgoingTransaction">Create</button>
@@ -156,6 +161,11 @@ export default {
 
       incomingTransactions: [],
       outgoingTransactions: [],
+
+      inTransactionAmount: null,
+      outTransactionAmount: null,
+      transactionSource: null,
+      transactionDestination: null,
 
       getURL: methods.getURL,
       getJSON: methods.getJSON,

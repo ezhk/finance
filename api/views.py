@@ -252,6 +252,11 @@ class IncomeSet(BaseModelSet):
 
     queryset = model_class.objects.select_related().all()
 
+    @action(methods=["get"], detail=True)
+    def outgoing(self, request, pk):
+        incomes = IncomeTransaction.objects.select_related().filter(income=pk)
+        return Response(IncomeTransactionSerializer(incomes, many=True).data)
+
 
 class ExpenseSet(BaseModelSet):
     model_class = ExpenseCategory
