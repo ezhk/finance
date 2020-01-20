@@ -63,10 +63,16 @@ export default {
   },
 
   methods: {
+    showError(error) {
+      return this.$parent.$refs.error.showError(error);
+    },
+
     getUserInfo() {
-      this.getJSON(this.getURL("showUser")).then(data => {
-        this.user = data.username;
-      });
+      this.getJSON(this.getURL("showUser"))
+        .then(data => {
+          this.user = data.username;
+        })
+        .catch(error => this.showError(error));
     },
 
     loginUser() {
@@ -85,13 +91,15 @@ export default {
           "Content-Type": "application/json",
           "X-CSRFToken": csrfToken
         }
-      }).then(() => {
-        // Does function refreshData exist?
-        const refreshDataFunc = this.$parent.$refs.router.refreshData;
-        if (typeof refreshDataFunc === "function") refreshDataFunc();
+      })
+        .then(() => {
+          // Does function refreshData exist?
+          const refreshDataFunc = this.$parent.$refs.router.refreshData;
+          if (typeof refreshDataFunc === "function") refreshDataFunc();
 
-        this.getUserInfo();
-      });
+          this.getUserInfo();
+        })
+        .catch(error => this.$parent.$refs.error.showError(error));
     },
 
     logoutUser() {
@@ -102,13 +110,15 @@ export default {
         headers: {
           "X-CSRFToken": csrfToken
         }
-      }).then(() => {
-        // Does function refreshData exist?
-        const refreshDataFunc = this.$parent.$refs.router.refreshData;
-        if (typeof refreshDataFunc === "function") refreshDataFunc();
+      })
+        .then(() => {
+          // Does function refreshData exist?
+          const refreshDataFunc = this.$parent.$refs.router.refreshData;
+          if (typeof refreshDataFunc === "function") refreshDataFunc();
 
-        this.getUserInfo();
-      });
+          this.getUserInfo();
+        })
+        .catch(error => this.$parent.$refs.error.showError(error));
     }
   },
 

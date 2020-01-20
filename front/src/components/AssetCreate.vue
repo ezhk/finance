@@ -55,6 +55,10 @@ export default {
   },
 
   methods: {
+    showError(error) {
+      return this.$parent.$parent.$refs.error.showError(error);
+    },
+
     createAsset() {
       const url = this.getURL("createAsset");
       const csrfToken = this.getCookie("csrftoken");
@@ -63,7 +67,7 @@ export default {
         balance: parseFloat(this.assetBalance),
         type: this.assetType
       });
-
+      console.log(this.$root);
       fetch(url, {
         credentials: "include",
         body,
@@ -72,14 +76,17 @@ export default {
           "Content-Type": "application/json",
           "X-CSRFToken": csrfToken
         }
-      }).then(response => {
-        if (response.status != 201) return;
+      })
+        .then(response => {
+          if (response.status != 201)
+            throw `Incorrect status code ${response.status}`;
 
-        this.closeBlock();
-        this.resetInitData();
+          this.closeBlock();
+          this.resetInitData();
 
-        this.$parent.refreshData();
-      });
+          this.$parent.refreshData();
+        })
+        .catch(error => this.showError(error));
     },
 
     closeBlock() {

@@ -10,6 +10,8 @@
         <router-view :key="$route.fullPath" ref="router"></router-view>
       </keep-alive>
     </div>
+    <error ref="error"></error>
+
     <footer class="site-footer">
       <a href="https://github.com/ezhk">Andrey Kiselev</a> &copy;&nbsp;2020
     </footer>
@@ -18,12 +20,14 @@
 
 <script>
 import UserLogin from "./components/UserLogin.vue";
+import Error from "./components/Error.vue";
 
 export default {
   name: "app",
 
   components: {
-    UserLogin
+    UserLogin,
+    Error
   }
 };
 </script>

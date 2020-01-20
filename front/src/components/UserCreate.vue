@@ -54,6 +54,10 @@ export default {
   },
 
   methods: {
+    showError(error) {
+      return this.$parent.$refs.error.showError(error);
+    },
+
     createUser() {
       const url = this.getURL("createUser");
       const csrfToken = this.getCookie("csrftoken");
@@ -71,13 +75,15 @@ export default {
           "Content-Type": "application/json",
           "X-CSRFToken": csrfToken
         }
-      }).then(data => {
-        // created successful status eq 201
-        if (data.status == 201) {
-          this.$parent.$refs.login.getUserInfo();
-          this.$router.push("/");
-        }
-      });
+      })
+        .then(data => {
+          // created successful status eq 201
+          if (data.status == 201) {
+            this.$parent.$refs.login.getUserInfo();
+            this.$router.push("/");
+          }
+        })
+        .catch(error => this.showError(error));
     }
   }
 };

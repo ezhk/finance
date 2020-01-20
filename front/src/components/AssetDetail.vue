@@ -179,6 +179,10 @@ export default {
   },
 
   methods: {
+    showError(error) {
+      return this.$parent.$parent.$refs.error.showError(error);
+    },
+
     deleteAsset() {
       const url = this.getURL("detailAsset", this.assetPk);
       const csrfToken = this.getCookie("csrftoken");
@@ -189,12 +193,15 @@ export default {
           "Content-Type": "application/json",
           "X-CSRFToken": csrfToken
         }
-      }).then(response => {
-        if (response.status != 204) return;
+      })
+        .then(response => {
+          if (response.status != 204)
+            throw `Incorrect status code ${response.status}`;
 
-        this.$parent.refreshData();
-        this.$parent.hidePopups();
-      });
+          this.$parent.refreshData();
+          this.$parent.hidePopups();
+        })
+        .catch(error => this.showError(error));
     },
 
     updateAsset() {
@@ -214,12 +221,15 @@ export default {
           "Content-Type": "application/json",
           "X-CSRFToken": csrfToken
         }
-      }).then(response => {
-        if (response.status != 200) return;
+      })
+        .then(response => {
+          if (response.status != 200)
+            throw `Incorrect status code ${response.status}`;
 
-        this.closeBlock();
-        this.$parent.refreshData();
-      });
+          this.closeBlock();
+          this.$parent.refreshData();
+        })
+        .catch(error => this.showError(error));
     },
 
     updateAssetData() {
@@ -229,17 +239,21 @@ export default {
     },
 
     getDetails() {
-      this.getJSON(this.getURL("detailAsset", this.assetPk)).then(data => {
-        this.assetName = data.description;
-        this.assetBalance = data.balance;
-        this.assetType = data.type;
-      });
+      this.getJSON(this.getURL("detailAsset", this.assetPk))
+        .then(data => {
+          this.assetName = data.description;
+          this.assetBalance = data.balance;
+          this.assetType = data.type;
+        })
+        .catch(error => this.showError(error));
     },
 
     getIncomingTransactions() {
-      this.getJSON(this.getURL("incomingAsset", this.assetPk)).then(data => {
-        this.incomingTransactions = data.results;
-      });
+      this.getJSON(this.getURL("incomingAsset", this.assetPk))
+        .then(data => {
+          this.incomingTransactions = data.results;
+        })
+        .catch(error => this.showError(error));
     },
 
     createIncomeTransaction() {
@@ -259,13 +273,16 @@ export default {
           "Content-Type": "application/json",
           "X-CSRFToken": csrfToken
         }
-      }).then(response => {
-        if (response.status != 201) return;
+      })
+        .then(response => {
+          if (response.status != 201)
+            throw `Incorrect status code ${response.status}`;
 
-        this.inTransactionAmount = null;
-        this.updateAssetData();
-        this.$parent.getCommonInfo();
-      });
+          this.inTransactionAmount = null;
+          this.updateAssetData();
+          this.$parent.getCommonInfo();
+        })
+        .catch(error => this.showError(error));
     },
 
     deleteIncomingTransaction(transactionID) {
@@ -278,18 +295,23 @@ export default {
           "Content-Type": "application/json",
           "X-CSRFToken": csrfToken
         }
-      }).then(response => {
-        if (response.status != 204) return;
+      })
+        .then(response => {
+          if (response.status != 204)
+            throw `Incorrect status code ${response.status}`;
 
-        this.updateAssetData();
-        this.$parent.getCommonInfo();
-      });
+          this.updateAssetData();
+          this.$parent.getCommonInfo();
+        })
+        .catch(error => this.showError(error));
     },
 
     getOutgoingTransactions() {
-      this.getJSON(this.getURL("outgoingAsset", this.assetPk)).then(data => {
-        this.outgoingTransactions = data.results;
-      });
+      this.getJSON(this.getURL("outgoingAsset", this.assetPk))
+        .then(data => {
+          this.outgoingTransactions = data.results;
+        })
+        .catch(error => this.showError(error));
     },
 
     createOutgoingTransaction() {
@@ -309,13 +331,16 @@ export default {
           "Content-Type": "application/json",
           "X-CSRFToken": csrfToken
         }
-      }).then(response => {
-        if (response.status != 201) return;
+      })
+        .then(response => {
+          if (response.status != 201)
+            throw `Incorrect status code ${response.status}`;
 
-        this.outTransactionAmount = null;
-        this.updateAssetData();
-        this.$parent.getCommonInfo();
-      });
+          this.outTransactionAmount = null;
+          this.updateAssetData();
+          this.$parent.getCommonInfo();
+        })
+        .catch(error => this.showError(error));
     },
 
     deleteOutgoingTransaction(transactionID) {
@@ -329,12 +354,15 @@ export default {
           "Content-Type": "application/json",
           "X-CSRFToken": csrfToken
         }
-      }).then(response => {
-        if (response.status != 204) return;
+      })
+        .then(response => {
+          if (response.status != 204)
+            throw `Incorrect status code ${response.status}`;
 
-        this.updateAssetData();
-        this.$parent.getCommonInfo();
-      });
+          this.updateAssetData();
+          this.$parent.getCommonInfo();
+        })
+        .catch(error => this.showError(error));
     },
 
     closeBlock() {

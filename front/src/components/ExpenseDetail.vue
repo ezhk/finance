@@ -118,6 +118,10 @@ export default {
   },
 
   methods: {
+    showError(error) {
+      return this.$parent.$parent.$refs.error.showError(error);
+    },
+
     deleteExpense() {
       const url = this.getURL("detailExpense", this.expensePk);
       const csrfToken = this.getCookie("csrftoken");
@@ -128,12 +132,15 @@ export default {
           "Content-Type": "application/json",
           "X-CSRFToken": csrfToken
         }
-      }).then(response => {
-        if (response.status != 204) return;
+      })
+        .then(response => {
+          if (response.status != 204)
+            throw `Incorrect status code ${response.status}`;
 
-        this.$parent.refreshData();
-        this.$parent.hidePopups();
-      });
+          this.$parent.refreshData();
+          this.$parent.hidePopups();
+        })
+        .catch(error => this.showError(error));
     },
 
     updateExpense() {
@@ -152,12 +159,15 @@ export default {
           "Content-Type": "application/json",
           "X-CSRFToken": csrfToken
         }
-      }).then(response => {
-        if (response.status != 200) return;
+      })
+        .then(response => {
+          if (response.status != 200)
+            throw `Incorrect status code ${response.status}`;
 
-        this.closeBlock();
-        this.$parent.refreshData();
-      });
+          this.closeBlock();
+          this.$parent.refreshData();
+        })
+        .catch(error => this.showError(error));
     },
 
     updateExpenseData() {
@@ -166,18 +176,20 @@ export default {
     },
 
     getDetails() {
-      this.getJSON(this.getURL("detailExpense", this.expensePk)).then(data => {
-        this.expenseName = data.description;
-        this.expenseMonthlyLimit = data.monthly_limit;
-      });
+      this.getJSON(this.getURL("detailExpense", this.expensePk))
+        .then(data => {
+          this.expenseName = data.description;
+          this.expenseMonthlyLimit = data.monthly_limit;
+        })
+        .catch(error => this.showError(error));
     },
 
     getTransactions() {
-      this.getJSON(this.getURL("incomingExpense", this.expensePk)).then(
-        data => {
+      this.getJSON(this.getURL("incomingExpense", this.expensePk))
+        .then(data => {
           this.transactions = data;
-        }
-      );
+        })
+        .catch(error => this.showError(error));
     },
 
     createTransaction() {
@@ -197,13 +209,16 @@ export default {
           "Content-Type": "application/json",
           "X-CSRFToken": csrfToken
         }
-      }).then(response => {
-        if (response.status != 201) return;
+      })
+        .then(response => {
+          if (response.status != 201)
+            throw `Incorrect status code ${response.status}`;
 
-        this.inTransactionAmount = null;
-        this.updateExpenseData();
-        this.$parent.getCommonInfo();
-      });
+          this.inTransactionAmount = null;
+          this.updateExpenseData();
+          this.$parent.getCommonInfo();
+        })
+        .catch(error => this.showError(error));
     },
 
     deleteTransaction(transactionID) {
@@ -216,12 +231,15 @@ export default {
           "Content-Type": "application/json",
           "X-CSRFToken": csrfToken
         }
-      }).then(response => {
-        if (response.status != 204) return;
+      })
+        .then(response => {
+          if (response.status != 204)
+            throw `Incorrect status code ${response.status}`;
 
-        this.updateExpenseData();
-        this.$parent.getCommonInfo();
-      });
+          this.updateExpenseData();
+          this.$parent.getCommonInfo();
+        })
+        .catch(error => this.showError(error));
     },
 
     closeBlock() {

@@ -82,6 +82,7 @@
 
 <script>
 import methods from "../methods.js";
+
 import IncomeCreate from "./IncomeCreate.vue";
 import IncomeDetail from "./IncomeDetail.vue";
 import AssetCreate from "./AssetCreate.vue";
@@ -128,6 +129,10 @@ export default {
   },
 
   methods: {
+    showError(error) {
+      return this.$parent.$refs.error.showError(error);
+    },
+
     getExpenseLimitColor(currentValue, limit) {
       const level = currentValue / limit;
 
@@ -137,11 +142,13 @@ export default {
     },
 
     getCommonInfo() {
-      this.getJSON(this.getURL("commonInfo")).then(data => {
-        this.incomes = data.incomes;
-        this.assets = data.assets;
-        this.expenses = data.expenses;
-      });
+      this.getJSON(this.getURL("commonInfo"))
+        .then(data => {
+          this.incomes = data.incomes;
+          this.assets = data.assets;
+          this.expenses = data.expenses;
+        })
+        .catch(error => this.showError(error));
     },
 
     refreshData() {
