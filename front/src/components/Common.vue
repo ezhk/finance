@@ -41,7 +41,10 @@
           @click.prevent="showPopups('showAssetDetail', asset.pk)"
         >
           <div class="category-name">{{limitWordLength(asset.description)}}</div>
-          <div class="category-balance">{{parseFloat(asset.balance).toFixed(2)}}₽</div>
+          <div
+            class="category-balance"
+            :class="asset.balance < 0 ? 'text-danger' : ''"
+          >{{parseFloat(asset.balance).toFixed(2)}}₽</div>
         </div>
         <div class="category" @click.prevent="showPopups('showAssetCreate')">
           <div class="category-name category-add">&#65291;</div>
@@ -156,6 +159,10 @@ export default {
       this[variable] = value;
     },
 
+    /**
+     * Function hide previously opened
+     * popups and disable blur effect.
+     */
     hidePopups() {
       document
         .querySelectorAll(".category-block, .arrow")
