@@ -81,7 +81,7 @@ footer > a {
 .container {
   margin: 0 auto;
 
-  max-width: 1000px;
+  max-width: 800px;
   min-width: 320px;
   min-height: 100%;
 
