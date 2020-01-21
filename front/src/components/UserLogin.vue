@@ -92,7 +92,9 @@ export default {
           "X-CSRFToken": csrfToken
         }
       })
-        .then(() => {
+        .then(data => {
+          if (data.status != 200) throw `Incorrect status code ${data.status}`;
+
           // Does function refreshData exist?
           const refreshDataFunc = this.$parent.$refs.router.refreshData;
           if (typeof refreshDataFunc === "function") refreshDataFunc();

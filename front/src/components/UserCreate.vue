@@ -121,6 +121,7 @@ export default {
         .then(data => {
           // created successful status eq 201
           if (data.status != 201) throw `Incorrect status code ${data.status}`;
+
           this.$parent.$refs.login.getUserInfo();
           this.$router.push("/");
         })
