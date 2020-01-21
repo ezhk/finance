@@ -8,8 +8,17 @@
           id="username"
           placeholder="Username"
           v-model="username"
+          @blur="$v.username.$touch()"
+          :class="$v.username.$error ? 'error-input' : ''"
         />
+        <span class="error-description" v-if="$v.username.$error">
+          <div
+            v-if="!$v.username.minLength"
+          >Minimum username length: {{ $v.username.$params.minLength.min }} symbols</div>
+          <div v-else>Username field required</div>
+        </span>
       </div>
+
       <div class="form-group">
         <input
           type="password"
@@ -17,8 +26,18 @@
           id="password"
           placeholder="Password"
           v-model="password"
+          @blur="$v.password.$touch()"
+          :class="$v.password.$error ? 'error-input' : ''"
         />
+        <!-- Validation error -->
+        <span class="error-description" v-if="$v.password.$error">
+          <div
+            v-if="!$v.password.minLength"
+          >Minimum password length: {{ $v.password.$params.minLength.min }} symbols</div>
+          <div v-else>Password field required</div>
+        </span>
       </div>
+
       <div class="form-group">
         <input
           type="password"
@@ -26,16 +45,25 @@
           id="passwordRepeat"
           placeholder="Repeat password"
           v-model="passwordRepeat"
+          @blur="$v.passwordRepeat.$touch()"
+          :class="$v.passwordRepeat.$error ? 'error-input' : ''"
         />
+        <!-- Validation error -->
+        <span class="error-description" v-if="$v.passwordRepeat.$error">
+          <div v-if="!$v.passwordRepeat.sameAsPassword">Passwords must be equals</div>
+          <div v-else>Password field required</div>
+        </span>
       </div>
+
       <div class="auth-buttons">
-        <button class="btn btn-light" @click.prevent="createUser">Create</button>
+        <button class="btn btn-secondary" @click.prevent="createUser" :disabled="$v.$invalid">Create</button>
       </div>
     </form>
   </div>
 </template>
 
 <script>
+import { required, minLength, sameAs } from "vuelidate/lib/validators";
 import methods from "../methods.js";
 
 export default {
@@ -51,6 +79,20 @@ export default {
       getURL: methods.getURL,
       getCookie: methods.getCookie
     };
+  },
+
+  validations: {
+    username: {
+      required,
+      minLength: minLength(4)
+    },
+    password: {
+      required,
+      minLength: minLength(8)
+    },
+    passwordRepeat: {
+      sameAsPassword: sameAs("password")
+    }
   },
 
   methods: {
@@ -78,10 +120,9 @@ export default {
       })
         .then(data => {
           // created successful status eq 201
-          if (data.status == 201) {
-            this.$parent.$refs.login.getUserInfo();
-            this.$router.push("/");
-          }
+          if (data.status != 201) throw `Incorrect status code ${data.status}`;
+          this.$parent.$refs.login.getUserInfo();
+          this.$router.push("/");
         })
         .catch(error => this.showError(error));
     }
@@ -98,10 +139,18 @@ export default {
 }
 
 form {
-  min-width: 400px;
+  min-width: 320px;
   padding: 5px;
 
   border: 0.5px dashed darkgray;
   border-radius: 5px;
+}
+
+.error-input {
+  border-color: #dc3545;
+}
+.error-description {
+  font-size: 0.3rem;
+  color: #dc3545;
 }
 </style>

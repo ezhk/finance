@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import Vuelidate from 'vuelidate';
 
 import App from './App.vue';
 import Common from './components/Common.vue';
@@ -24,6 +25,7 @@ const router = new VueRouter({
 });
 
 Vue.use(VueRouter);
+Vue.use(Vuelidate);
 new Vue({
   router,
   render: h => h(App),
