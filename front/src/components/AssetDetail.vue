@@ -190,6 +190,7 @@ export default {
   validations: {
     transactionSource: { required },
     inTransactionAmount: { required, decimal },
+
     transactionDestination: { required },
     outTransactionAmount: { required, decimal }
   },
