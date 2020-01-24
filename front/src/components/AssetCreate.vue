@@ -29,7 +29,7 @@
         <option value="CC">Credit card</option>
       </select>
       <div class="category-add-buttons">
-        <button class="btn btn-light" @click.prevent="createAsset">Create</button>
+        <button class="btn btn-light" @click.prevent="createAsset" :disabled="$v.$invalid">Create</button>
         <button class="btn btn-light" @click.prevent="closeBlock">Close</button>
       </div>
     </form>
@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { required, decimal } from "vuelidate/lib/validators";
 import methods from "../methods.js";
 
 export default {
@@ -52,6 +53,11 @@ export default {
       getCookie: methods.getCookie,
       resetInitData: methods.resetInitData
     };
+  },
+
+  validations: {
+    assetName: { required },
+    assetBalance: { required, decimal }
   },
 
   methods: {

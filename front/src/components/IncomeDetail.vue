@@ -53,7 +53,11 @@
           >{{option.description}}</option>
         </select>
         <div class="category-add-buttons">
-          <button class="btn btn-secondary" @click.prevent="createTransaction">Create</button>
+          <button
+            class="btn btn-secondary"
+            @click.prevent="createTransaction"
+            :disabled="$v.$invalid"
+          >Create</button>
         </div>
       </form>
 
@@ -85,6 +89,7 @@
 </template>
 
 <script>
+import { required, decimal } from "vuelidate/lib/validators";
 import methods from "../methods.js";
 
 export default {
@@ -108,6 +113,11 @@ export default {
 
   mounted() {
     this.updateIncomeData();
+  },
+
+  validations: {
+    transactionDestination: { required },
+    transactionAmount: { required, decimal }
   },
 
   methods: {

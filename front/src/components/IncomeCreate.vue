@@ -12,7 +12,7 @@
         />
       </div>
       <div class="category-add-buttons">
-        <button class="btn btn-light" @click.prevent="createIncome">Create</button>
+        <button class="btn btn-light" @click.prevent="createIncome" :disabled="$v.$invalid">Create</button>
         <button class="btn btn-light" @click.prevent="closeBlock">Close</button>
       </div>
     </form>
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import { required } from "vuelidate/lib/validators";
 import methods from "../methods.js";
 
 export default {
@@ -33,6 +34,10 @@ export default {
       getCookie: methods.getCookie,
       resetInitData: methods.resetInitData
     };
+  },
+
+  validations: {
+    incomeName: { required }
   },
 
   methods: {

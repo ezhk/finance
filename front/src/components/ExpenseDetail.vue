@@ -59,7 +59,11 @@
           <option v-for="asset in assets" :key="asset.pk" :value="asset.pk">{{asset.description}}</option>
         </select>
         <div class="category-add-buttons">
-          <button class="btn btn-secondary" @click.prevent="createTransaction">Create</button>
+          <button
+            class="btn btn-secondary"
+            @click.prevent="createTransaction"
+            :disabled="$v.$invalid"
+          >Create</button>
         </div>
       </form>
 
@@ -91,6 +95,7 @@
 </template>
 
 <script>
+import { required, decimal } from "vuelidate/lib/validators";
 import methods from "../methods.js";
 
 export default {
@@ -115,6 +120,11 @@ export default {
 
   mounted() {
     this.updateExpenseData();
+  },
+
+  validations: {
+    transactionSource: { required },
+    transactionAmount: { required, decimal }
   },
 
   methods: {

@@ -77,6 +77,7 @@ export default {
       passwordRepeat: "",
 
       getURL: methods.getURL,
+      getJSON: methods.getJSON,
       getCookie: methods.getCookie
     };
   },
@@ -109,7 +110,7 @@ export default {
         password2: this.passwordRepeat
       });
 
-      fetch(url, {
+      this.getJSON(url, {
         credentials: "include",
         body,
         method: "POST",
@@ -119,8 +120,8 @@ export default {
         }
       })
         .then(data => {
-          // created successful status eq 201
-          if (data.status != 201) throw `Incorrect status code ${data.status}`;
+          if (!data.key) throw JSON.stringify(data);
+
           this.$parent.$refs.login.getUserInfo();
           this.$router.push("/");
         })
@@ -144,13 +145,5 @@ form {
 
   border: 0.5px dashed darkgray;
   border-radius: 5px;
-}
-
-.error-input {
-  border-color: #dc3545;
-}
-.error-description {
-  font-size: 0.3rem;
-  color: #dc3545;
 }
 </style>

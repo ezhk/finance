@@ -61,7 +61,11 @@
           <option v-for="inc in incomes" :key="inc.pk" :value="inc.pk">{{inc.description}}</option>
         </select>
         <div class="category-add-buttons">
-          <button class="btn btn-secondary" @click.prevent="createIncomeTransaction">Create</button>
+          <button
+            class="btn btn-secondary"
+            @click.prevent="createIncomeTransaction"
+            :disabled="$v.inTransactionAmount.$invalid || $v.transactionSource.$invalid"
+          >Create</button>
         </div>
       </form>
 
@@ -115,7 +119,11 @@
           <option v-for="exp in expenses" :key="exp.pk" :value="exp.pk">{{exp.description}}</option>
         </select>
         <div class="category-add-buttons">
-          <button class="btn btn-secondary" @click.prevent="createOutgoingTransaction">Create</button>
+          <button
+            class="btn btn-secondary"
+            @click.prevent="createOutgoingTransaction"
+            :disabled="$v.outTransactionAmount.$invalid || $v.transactionDestination.$invalid"
+          >Create</button>
         </div>
       </form>
 
@@ -147,6 +155,7 @@
 </template>
 
 <script>
+import { required, decimal } from "vuelidate/lib/validators";
 import methods from "../methods.js";
 
 export default {
@@ -176,6 +185,13 @@ export default {
 
   mounted() {
     this.updateAssetData();
+  },
+
+  validations: {
+    transactionSource: { required },
+    inTransactionAmount: { required, decimal },
+    transactionDestination: { required },
+    outTransactionAmount: { required, decimal }
   },
 
   methods: {

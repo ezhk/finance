@@ -15,6 +15,8 @@
               id="authUsername"
               placeholder="Username"
               v-model="authUsername"
+              @blur="$v.authUsername.$touch()"
+              :class="$v.authUsername.$error ? 'error-input' : ''"
             />
           </div>
           <div class="form-group">
@@ -24,11 +26,13 @@
               id="authPassword"
               placeholder="Password"
               v-model="authPassword"
+              @blur="$v.authPassword.$touch()"
+              :class="$v.authPassword.$error ? 'error-input' : ''"
             />
           </div>
           <div class="auth-buttons">
             <router-link class="btn btn-light" to="/user/create">Sign up</router-link>
-            <button class="btn btn-light" @click.prevent="loginUser">Login</button>
+            <button class="btn btn-light" @click.prevent="loginUser" :disabled="$v.$invalid">Login</button>
           </div>
         </form>
       </div>
@@ -37,6 +41,7 @@
 </template>
 
 <script>
+import { required } from "vuelidate/lib/validators";
 import methods from "../methods.js";
 
 export default {
@@ -62,6 +67,11 @@ export default {
     this.getUserInfo();
   },
 
+  validations: {
+    authUsername: { required },
+    authPassword: { required }
+  },
+
   methods: {
     showError(error) {
       return this.$parent.$refs.error.showError(error);
@@ -83,7 +93,7 @@ export default {
         password: this.authPassword
       });
 
-      fetch(url, {
+      this.getJSON(url, {
         credentials: "include",
         body,
         method: "POST",
@@ -92,7 +102,9 @@ export default {
           "X-CSRFToken": csrfToken
         }
       })
-        .then(() => {
+        .then(data => {
+          if (!data.key) throw JSON.stringify(data);
+
           // Does function refreshData exist?
           const refreshDataFunc = this.$parent.$refs.router.refreshData;
           if (typeof refreshDataFunc === "function") refreshDataFunc();
@@ -111,7 +123,10 @@ export default {
           "X-CSRFToken": csrfToken
         }
       })
-        .then(() => {
+        .then(response => {
+          if (response.status != 200)
+            throw `Incorrect status code ${response.status}`;
+
           // Does function refreshData exist?
           const refreshDataFunc = this.$parent.$refs.router.refreshData;
           if (typeof refreshDataFunc === "function") refreshDataFunc();
