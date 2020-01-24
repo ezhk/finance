@@ -153,3 +153,68 @@ class ExpenseTransaction(AbstractTransaction):
             self.inc_asset(self.amount)
             super().delete()
         return True
+
+
+class FabricTransaction:
+    INCOME = "IncomeTransaction"
+    EXPENSE = "ExpenseTransaction"
+
+    @staticmethod
+    def create_factory(name, *args, **kwargs):
+        if name == __class__.INCOME:
+            return globals()[__class__.INCOME]()
+        if name == __class__.EXPENSE:
+            return globals()[__class__.EXPENSE]()
+
+
+class TransactionBuilder:
+    def __init__(self, transaction_type):
+        self._transaction = FabricTransaction.create_factory(transaction_type)
+
+    def asset(self, asset_id):
+        self._transaction.asset_id = asset_id
+        return self
+
+    def amount(self, amount):
+        self._transaction.amount = amount
+        return self
+
+    def build(self):
+        return self._transaction
+
+
+"""
+FabricTransaction and TransactionBuilder
+presented as a demostration to lesson 3
+of homework:
+- FabricTransaction is a fibric method for created
+  transaction instance
+- TransactionBuilder add diferent attributes to
+  object
+
+How does it work:
+>>> from main.models import *
+>>> obj = TransactionBuilder("IncomeTransaction")
+>>> Asset.objects.first().id
+1
+>>> obj.asset(1)
+<main.models.TransactionBuilder object at 0x10271e150>
+>>> obj.amount(100500)
+<main.models.TransactionBuilder object at 0x10271e150>
+>>> builded_transaction = obj.asset(1).amount(100500).build()
+>>> builded_transaction.__dict__
+{'_state': <django.db.models.base.ModelState object at 0x102719dd0>, 'id': None, 'asset_id': 1, 'created_at': None, 'amount': 100500, 'income_id': None}
+>>> builded_transaction.save()
+...
+sqlite3.IntegrityError: NOT NULL constraint failed: main_incometransaction.income_id
+...
+>>> builded_transaction.income_id = 1
+>>> builded_transaction.save()
+True
+>>> builded_transaction.pk
+2
+
+Result:
+>>> IncomeTransaction.objects.get(pk=2).__dict__
+{'_state': <django.db.models.base.ModelState object at 0x1028a8390>, 'id': 2, 'asset_id': 1, 'created_at': datetime.datetime(2020, 1, 22, 7, 44, 46, 458567, tzinfo=<UTC>), 'amount': Decimal('100500.0000'), 'income_id': 1}
+"""
