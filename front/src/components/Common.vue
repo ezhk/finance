@@ -15,6 +15,7 @@
     <expense-detail v-if="showExpenseDetail" :expense-pk="showExpenseDetail" :assets="assets"></expense-detail>
 
     <div class="category-block">
+      <div class="category-type">Incomes</div>
       <div class="incomes">
         <div
           v-for="income in incomes"
@@ -29,10 +30,10 @@
           <div class="category-name category-add">&#65291;</div>
         </div>
       </div>
-      <div class="category-type">Incomes</div>
     </div>
     <div class="arrow">&#x203A;</div>
     <div class="category-block">
+      <div class="category-type">Assets</div>
       <div class="assets">
         <div
           v-for="asset in assets"
@@ -50,10 +51,10 @@
           <div class="category-name category-add">&#65291;</div>
         </div>
       </div>
-      <div class="category-type">Assets</div>
     </div>
     <div class="arrow">&#x203A;</div>
     <div class="category-block">
+      <div class="category-type">Expenses</div>
       <div class="expenses">
         <div
           v-for="expense in expenses"
@@ -75,7 +76,6 @@
           <div class="category-name category-add">&#65291;</div>
         </div>
       </div>
-      <div class="category-type">Expenses</div>
     </div>
   </div>
 </template>
@@ -219,7 +219,7 @@ export default {
   display: flex;
   flex-direction: column;
 
-  height: 100%;
+  /* height: 100%; */
 }
 .expenses {
   flex-direction: row;
