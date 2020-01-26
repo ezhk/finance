@@ -39,6 +39,7 @@ footer {
   padding: 0 5px;
   height: 45px;
 
+  background-color: #6da21fb0;
   border-radius: 5px;
   border: 0.5px solid darkgray;
 
@@ -58,7 +59,6 @@ header {
 
 .header-title {
   font-size: 1.3rem;
-  color: goldenrod !important;
 }
 .header-title:any-link {
   color: unset;

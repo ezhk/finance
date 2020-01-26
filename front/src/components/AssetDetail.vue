@@ -393,20 +393,20 @@ export default {
 .category-add {
   width: 350px;
   position: absolute;
-  top: 5%;
+  top: 4%;
   padding: 5px;
   z-index: 1;
 
   background: white !important;
 
-  border: 1px dashed darkgray;
+  border: 1px solid darkgray;
   border-radius: 5px;
 
   text-align: center;
   overflow-y: scroll;
 
   /* max-height: 90%; */
-  height: 90%;
+  height: 92%;
 }
 
 .category-add-buttons {

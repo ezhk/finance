@@ -201,6 +201,7 @@ export default {
   display: flex;
   flex-direction: column;
 
+  background-color: #6da21f75;
   border: 0.5px dashed darkgray;
   border-radius: 5px;
 
@@ -242,6 +243,7 @@ export default {
   height: 80px;
   width: 80px;
 
+  background-color: white;
   border: 0.5px solid darkgray;
   border-radius: 5px;
 

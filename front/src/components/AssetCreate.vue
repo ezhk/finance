@@ -111,7 +111,7 @@ export default {
 
   background: white !important;
 
-  border: 1px dashed darkgray;
+  border: 1px solid darkgray;
   border-radius: 5px;
 
   text-align: center;
