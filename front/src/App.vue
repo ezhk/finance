@@ -58,7 +58,6 @@ header {
 
 .header-title {
   font-size: 1.3rem;
-  font-family: monospace;
   color: goldenrod !important;
 }
 .header-title:any-link {

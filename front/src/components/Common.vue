@@ -218,8 +218,6 @@ export default {
 .expenses {
   display: flex;
   flex-direction: column;
-
-  /* height: 100%; */
 }
 .expenses {
   flex-direction: row;
