@@ -30,8 +30,8 @@ export default {
 
 <style scoped>
 .error {
-  position: relative;
-  bottom: 7%;
+  position: absolute;
+  bottom: 55px;
   z-index: 1;
 
   padding: 3px;
