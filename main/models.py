@@ -268,3 +268,28 @@ Lesson 4:
   in BaseAsset class used attribute transactions as
   Transaction class presentation.
 """
+
+
+class TransactionStrategy:
+    def __init__(self):
+        pass
+
+    def save(self, strategy):
+        return strategy.save()
+
+
+"""
+Lesson5:
+- Strategy:
+  TransactionStrategy realize one upstairs logic
+  where we're calling inner method with defined
+  earlier class:
+
+  init_transacation = IncomeTransaction(asset_id=1, income_id=1, amount=500)
+  tr_action = TransactionStrategy()
+  tr_action.save(init_transacation)
+
+- Memento:
+  all api.serializer classes creates and parses
+  static object JSON presentation.
+"""
