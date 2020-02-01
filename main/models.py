@@ -218,3 +218,53 @@ Result:
 >>> IncomeTransaction.objects.get(pk=2).__dict__
 {'_state': <django.db.models.base.ModelState object at 0x1028a8390>, 'id': 2, 'asset_id': 1, 'created_at': datetime.datetime(2020, 1, 22, 7, 44, 46, 458567, tzinfo=<UTC>), 'amount': Decimal('100500.0000'), 'income_id': 1}
 """
+
+
+class TransactionFacade:
+    def __init__(self, transaction_type):
+        self._transaction = FabricTransaction.create_factory(transaction_type)
+        self.builded_transaction = None
+
+    def build(self):
+        self.builded_transaction = (
+            self._transaction.asset(1).amount(100500).build()
+        )
+        return self.builded_transaction
+
+    def save(self):
+        return self.builded_transaction.save()
+
+
+class Transactions:
+    def __init__(self, transactions=None):
+        self.transactions = transactions or []
+
+    @property
+    def get(self):
+        return self.transactions
+
+    @property
+    def sum(self):
+        return sum([tr.amount for tr in self.transactions])
+
+
+class BaseAsset:
+    def __init__(self, transactions):
+        # class bridge as attribute
+        self.transactions = Transactions(transactions)
+
+    def expenses(self):
+        return self.transactions.sum
+
+
+"""
+Lesson 4:
+- Facade:
+  all api.views abstractions work as facade,
+  because presented as upper level abstraction
+  on below layer processing.
+  ALso as example - TransactionFacade.
+- Bridge:
+  in BaseAsset class used attribute transactions as
+  Transaction class presentation.
+"""
