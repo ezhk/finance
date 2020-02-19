@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
 
+"""
+Apllication might be running as
+$ wsgi --ini uwsgi.ini.
+
+Simple presentation ot uwsgi request processing.
+"""
+
 
 class Application:
     def __init__(self):
@@ -52,11 +59,11 @@ def contacts_route(request_data):
 
 
 @app.add_middleware
-def method_ware(request_data, environ):
-    request_data["method"] = environ["REQUEST_METHOD"]
+def method_ware(request_data, env):
+    request_data["method"] = env["REQUEST_METHOD"]
 
 
 @app.add_middleware
-def hello_ware(request_data, environ):
+def hello_ware(request_data, env):
     request_data["other"] = "Hello from Front controller"
 
