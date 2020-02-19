@@ -16,7 +16,6 @@ class Application:
         return inner_func
 
     def __call__(self, env, start_response):
-        print("HERE")
         path = env.get("PATH_INFO", None)
         route = self.routes.get(path, None)
 
