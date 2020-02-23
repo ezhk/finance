@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -171,13 +172,12 @@ class BaseModelTransactionSet(
         except:
             raise BadRequestException()
 
-        from_qs = self.from_model.objects.filter(
-            pk=from_id, user=request.user.pk
-        ).first()
-        to_qs = self.to_model.objects.filter(
-            pk=to_id, user=request.user.pk
-        ).first()
-        if from_qs is None or to_qs is None:
+        try:
+            from_qs = self.from_model.objects.get(
+                pk=from_id, user=request.user.pk
+            )
+            to_qs = self.to_model.objects.get(pk=to_id, user=request.user.pk)
+        except ObjectDoesNotExist:
             raise NotFoundException()
 
         transaction = self.model_class(**serializer.data)
@@ -194,29 +194,33 @@ class BaseModelTransactionSet(
         )
         if not queryset_object:
             raise NotFoundException()
+
         page = self.paginate_queryset(queryset_object)
         if page is None:
             raise NotFoundException()
+
         serializer = self.serializer_class(page, many=True)
         return self.get_paginated_response(serializer.data)
 
     def retrieve(self, request, pk):
-        obj = self.queryset.filter(
-            pk=pk,
-            **{f"{self.from_field}__user": request.user},
-            **{f"{self.to_field}__user": request.user},
-        ).first()
-        if not obj:
+        try:
+            obj = self.queryset.get(
+                pk=pk,
+                **{f"{self.from_field}__user": request.user},
+                **{f"{self.to_field}__user": request.user},
+            )
+        except ObjectDoesNotExist:
             raise NotFoundException()
         return Response(self.serializer_class(obj).data)
 
     def destroy(self, request, pk):
-        obj = self.queryset.filter(
-            pk=pk,
-            **{f"{self.from_field}__user": request.user},
-            **{f"{self.to_field}__user": request.user},
-        ).first()
-        if not obj:
+        try:
+            obj = self.queryset.get(
+                pk=pk,
+                **{f"{self.from_field}__user": request.user},
+                **{f"{self.to_field}__user": request.user},
+            )
+        except ObjectDoesNotExist:
             raise NotFoundException()
         return super().destroy(request, pk)
 
