@@ -152,6 +152,41 @@ REST_FRAMEWORK = {
 # Auth param
 SITE_ID = 1
 
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "standard": {
+            "format": "[{asctime}] {levelname} {name} > {module}: {message}",
+            "style": "{",
+        },
+        "simple": {"format": "{message}", "style": "{",},
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "standard",
+        },
+        "syslog": {
+            "class": "logging.handlers.SysLogHandler",
+            "facility": "user",
+            "formatter": "simple",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["syslog", "console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "daphne": {
+            "handlers": ["syslog"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+}
+
 if DEBUG:
     INTERNAL_IPS = ["127.0.0.1", "::1"]
     INSTALLED_APPS.extend(["debug_toolbar", "template_profiler_panel"])
