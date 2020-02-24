@@ -175,9 +175,9 @@ LOGGING = {
     },
     "loggers": {
         "django": {
-            "handlers": ["syslog", "console"],
+            "handlers": ["console"],
             "level": "INFO",
-            "propagate": False,
+            "propagate": True,
         },
         "daphne": {
             "handlers": ["syslog"],
