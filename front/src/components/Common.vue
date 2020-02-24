@@ -144,9 +144,13 @@ export default {
     getCommonInfo() {
       this.getJSON(this.getURL("commonInfo"))
         .then(data => {
-          this.incomes = data.incomes;
-          this.assets = data.assets;
-          this.expenses = data.expenses;
+          try {
+            this.incomes = data.incomes;
+            this.assets = data.assets;
+            this.expenses = data.expenses;
+          } catch (e) {
+            console.log(`getCommonInfo exception: ${e}`);
+          }
         })
         .catch(error => this.showError(error));
     },
