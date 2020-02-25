@@ -148,8 +148,8 @@ export default {
             this.incomes = data.incomes;
             this.assets = data.assets;
             this.expenses = data.expenses;
-          } catch (e) {
-            console.log(`getCommonInfo exception: ${e}`);
+          } catch (error) {
+            console.log(`getCommonInfo exception: ${error}`);
           }
         })
         .catch(error => this.showError(error));
