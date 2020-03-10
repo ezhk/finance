@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import BasePermission
 
 from api.exceptions import ForbiddenException, NotFoundException
@@ -20,15 +21,12 @@ class IsOwner(BasePermission):
         super().__init__()
 
     def has_permission(self, request, view):
-        obj = (
-            self.model.objects.select_related()
-            .filter(pk=view.kwargs.get("pk"))
-            .first()
-        )
-
-        # don't need permission for empty object
-        if obj is None:
-            return NotFoundException()
+        try:
+            obj = self.model.objects.select_related().get(
+                pk=view.kwargs.get("pk")
+            )
+        except ObjectDoesNotExist:
+            raise NotFoundException()
 
         if obj.user == request.user:
             return True
