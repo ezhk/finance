@@ -12,6 +12,9 @@ class IncomeSource(models.Model):
         verbose_name="Income source description", max_length=2048, blank=False,
     )
 
+    def __str__(self):
+        return f"Description: {self.description}"
+
 
 class Asset(models.Model):
     """
@@ -56,6 +59,9 @@ class Asset(models.Model):
         blank=True,
     )
 
+    def __str__(self):
+        return f"Description: {self.description}, balance: {self.balance}, type: {self.get_type_display()}"
+
 
 class ExpenseCategory(models.Model):
     user = models.ForeignKey(
@@ -74,6 +80,9 @@ class ExpenseCategory(models.Model):
         upload_to="expense-images",
         blank=True,
     )
+
+    def __str__(self):
+        return f"Description: {self.description}, monthly limit: {self.monthly_limit}"
 
 
 class AbstractTransaction(models.Model):
