@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 from django.core.exceptions import ObjectDoesNotExist
-from telegram import InlineKeyboardButton
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
 from bot.models import TelegramUser
 from main.models import IncomeSource, Asset, ExpenseCategory
@@ -12,7 +12,7 @@ class CategoryHandler(metaclass=ABCMeta):
     BUTTONS = (
         InlineKeyboardButton(text="show", callback_data="show"),
         InlineKeyboardButton(text="create", callback_data="create"),
-        InlineKeyboardButton(text="delete", callback_data="delete"),
+        InlineKeyboardButton(text="delete", callback_data="delete_menu"),
     )
     CREATE_DIALOG = ((None, None),)
 
@@ -46,6 +46,7 @@ class CategoryHandler(metaclass=ABCMeta):
         return None
 
     @classmethod
+    @abstractmethod
     def process_dialog(cls, update, context):
         username = cls._get_username(update)
         if not username:
@@ -71,6 +72,7 @@ class CategoryHandler(metaclass=ABCMeta):
         return "Category has created"
 
     @classmethod
+    @abstractmethod
     def show(cls, update, context):
         username = cls._get_username(update)
         if not username:
@@ -86,6 +88,7 @@ class CategoryHandler(metaclass=ABCMeta):
             )
 
     @classmethod
+    @abstractmethod
     def create(cls, update, context):
         """Create category object."""
         context.user_data["dialog"] = cls._dialog()
@@ -93,7 +96,7 @@ class CategoryHandler(metaclass=ABCMeta):
 
     @classmethod
     @abstractmethod
-    def delete(cls, update, context):
+    def delete_menu(cls, update, context):
         """Delete category by ID."""
         username = cls._get_username(update)
         if not username:
@@ -102,6 +105,43 @@ class CategoryHandler(metaclass=ABCMeta):
                 text="You don't link telegram user with sire user. "
                 + "Try /start command.",
             )
+
+        markup = InlineKeyboardMarkup([])
+        for record in cls.MODEL.objects.filter(user=username):
+            markup.inline_keyboard.append(
+                [
+                    InlineKeyboardButton(
+                        text=f"{record}",
+                        callback_data=f"delete_item:{record.pk}",
+                    )
+                ]
+            )
+
+        context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="Delete record",
+            reply_markup=markup,
+        )
+
+    @classmethod
+    @abstractmethod
+    def delete_item(cls, update, context):
+        username = cls._get_username(update)
+        if not username:
+            return context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text="You don't link telegram user with sire user. "
+                + "Try /start command.",
+            )
+
+        _, pk = update.callback_query.data.split(":")
+
+        print(cls.MODEL.objects.filter(user=username, pk=pk))
+        status = cls.MODEL.objects.filter(user=username, pk=pk).delete()
+        return context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=f"Delete category status: {status}",
+        )
 
 
 class IncomeHandler(CategoryHandler):

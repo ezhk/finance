@@ -45,11 +45,11 @@ class Command(BaseCommand):
         Method add CallbackQueryHandlers to dispatcher.
         """
 
-        for callback in ("show", "create", "delete"):
+        for callback in ("show", "create", "delete_menu", "delete_item"):
             dispatcher.add_handler(
                 CallbackQueryHandler(
                     getattr(DefaultCallbacksHandler, callback),
-                    pattern=callback,
+                    pattern=f"^{callback}",
                 )
             )
 

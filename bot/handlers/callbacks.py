@@ -8,5 +8,9 @@ class DefaultCallbacksHandler:
         context.user_data["handler"].create(update, context)
 
     @staticmethod
-    def delete(update, context):
-        context.user_data["handler"].delete(update, context)
+    def delete_menu(update, context):
+        context.user_data["handler"].delete_menu(update, context)
+
+    @staticmethod
+    def delete_item(update, context):
+        context.user_data["handler"].delete_item(update, context)
