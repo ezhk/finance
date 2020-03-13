@@ -1,14 +1,18 @@
 from abc import ABCMeta, abstractmethod
 
-from django.core.exceptions import ObjectDoesNotExist
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
 
-from bot.models import TelegramUser
+from bot.decorators import username_extension
 from main.models import IncomeSource, Asset, ExpenseCategory
+
+
+CATEGORY_NAMES = ("incomes", "assets", "expenses")
+CATEGORY_COMMANDS = ("show", "create", "delete_menu", "delete_item")
 
 
 class CategoryHandler(metaclass=ABCMeta):
     MODEL = None
+
     BUTTONS = (
         InlineKeyboardButton(text="show", callback_data="show"),
         InlineKeyboardButton(text="create", callback_data="create"),
@@ -36,25 +40,9 @@ class CategoryHandler(metaclass=ABCMeta):
             )
 
     @classmethod
-    def _get_username(cls, update):
-        tg_username = update.effective_user.username
-
-        try:
-            return TelegramUser.objects.get(tg_username=tg_username).user
-        except ObjectDoesNotExist:
-            pass
-        return None
-
-    @classmethod
+    @username_extension
     @abstractmethod
-    def process_dialog(cls, update, context):
-        username = cls._get_username(update)
-        if not username:
-            return (
-                "You don't link telegram user with sire user. "
-                + "Try /start command."
-            )
-
+    def process_dialog(cls, update, context, username):
         model_data = {}
         for field, value in context.user_data.items():
             try:
@@ -72,20 +60,18 @@ class CategoryHandler(metaclass=ABCMeta):
         return "Category has created"
 
     @classmethod
+    @username_extension
     @abstractmethod
-    def show(cls, update, context):
-        username = cls._get_username(update)
-        if not username:
-            return context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text="You don't link telegram user with sire user. "
-                + "Try /start command.",
-            )
-
-        for record in cls.MODEL.objects.filter(user=username):
-            context.bot.send_message(
-                chat_id=update.effective_chat.id, text=str(record)
-            )
+    def show(cls, update, context, username):
+        context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="\n".join(
+                [
+                    f"- {record} "
+                    for record in cls.MODEL.objects.filter(user=username)
+                ]
+            ),
+        )
 
     @classmethod
     @abstractmethod
@@ -95,17 +81,10 @@ class CategoryHandler(metaclass=ABCMeta):
         cls._start_dialog(update, context)
 
     @classmethod
+    @username_extension
     @abstractmethod
-    def delete_menu(cls, update, context):
+    def delete_menu(cls, update, context, username):
         """Delete category by ID."""
-        username = cls._get_username(update)
-        if not username:
-            return context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text="You don't link telegram user with sire user. "
-                + "Try /start command.",
-            )
-
         markup = InlineKeyboardMarkup([])
         for record in cls.MODEL.objects.filter(user=username):
             markup.inline_keyboard.append(
@@ -124,19 +103,17 @@ class CategoryHandler(metaclass=ABCMeta):
         )
 
     @classmethod
+    @username_extension
     @abstractmethod
-    def delete_item(cls, update, context):
-        username = cls._get_username(update)
-        if not username:
+    def delete_item(cls, update, context, username):
+        try:
+            _, pk = update.callback_query.data.split(":", 1)
+        except ValueError as err:
             return context.bot.send_message(
                 chat_id=update.effective_chat.id,
-                text="You don't link telegram user with sire user. "
-                + "Try /start command.",
+                text=f"Error: wrong delete action {err}",
             )
 
-        _, pk = update.callback_query.data.split(":")
-
-        print(cls.MODEL.objects.filter(user=username, pk=pk))
         status = cls.MODEL.objects.filter(user=username, pk=pk).delete()
         return context.bot.send_message(
             chat_id=update.effective_chat.id,

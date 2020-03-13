@@ -1,3 +1,6 @@
+from bot.handlers.commands import DefaultCommandsHandler
+
+
 class DefaultCallbacksHandler:
     @staticmethod
     def show(update, context):
@@ -14,3 +17,7 @@ class DefaultCallbacksHandler:
     @staticmethod
     def delete_item(update, context):
         context.user_data["handler"].delete_item(update, context)
+
+
+class CategoryCallbacksHandler(DefaultCommandsHandler):
+    pass

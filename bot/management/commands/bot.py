@@ -11,7 +11,15 @@ from telegram.ext import (
 )
 
 
-from bot.handlers.callbacks import DefaultCallbacksHandler
+from bot.handlers.categories import (
+    CategoryHandler,
+    CATEGORY_COMMANDS,
+    CATEGORY_NAMES,
+)
+from bot.handlers.callbacks import (
+    DefaultCallbacksHandler,
+    CategoryCallbacksHandler,
+)
 from bot.handlers.commands import DefaultCommandsHandler
 from bot.handlers.messages import DefaultMessagesHandler
 
@@ -29,10 +37,8 @@ class Command(BaseCommand):
             "start",
             "stop",
             "unlink",
-            "incomes",
-            "assets",
-            "expenses",
-            "transaction",
+            "categories",
+            "transactions",
         ):
             dispatcher.add_handler(
                 CommandHandler(
@@ -45,11 +51,19 @@ class Command(BaseCommand):
         Method add CallbackQueryHandlers to dispatcher.
         """
 
-        for callback in ("show", "create", "delete_menu", "delete_item"):
+        for callback in CATEGORY_COMMANDS:
             dispatcher.add_handler(
                 CallbackQueryHandler(
                     getattr(DefaultCallbacksHandler, callback),
                     pattern=f"^{callback}",
+                )
+            )
+
+        for callback in CATEGORY_NAMES:
+            dispatcher.add_handler(
+                CallbackQueryHandler(
+                    getattr(CategoryCallbacksHandler, callback),
+                    pattern=f"^{callback}$",
                 )
             )
 

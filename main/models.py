@@ -13,7 +13,7 @@ class IncomeSource(models.Model):
     )
 
     def __str__(self):
-        return f"Description: {self.description}"
+        return f"{self.description}"
 
 
 class Asset(models.Model):
@@ -60,7 +60,7 @@ class Asset(models.Model):
     )
 
     def __str__(self):
-        return f"Description: {self.description}, balance: {self.balance}, type: {self.get_type_display()}"
+        return f"{self.description} (balance: {self.balance}, type: {self.get_type_display()})"
 
 
 class ExpenseCategory(models.Model):
@@ -82,7 +82,7 @@ class ExpenseCategory(models.Model):
     )
 
     def __str__(self):
-        return f"Description: {self.description}, monthly limit: {self.monthly_limit}"
+        return f"{self.description} (monthly limit: {self.monthly_limit})"
 
 
 class AbstractTransaction(models.Model):

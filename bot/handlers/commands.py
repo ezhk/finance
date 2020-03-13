@@ -1,6 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 from telegram import (
+    InlineKeyboardButton,
     InlineKeyboardMarkup,
     ReplyKeyboardMarkup,
 )
@@ -12,6 +13,7 @@ from bot.handlers.categories import (
     IncomeHandler,
     AssetHandler,
     ExpenseHandler,
+    CATEGORY_NAMES,
 )
 
 
@@ -75,12 +77,32 @@ class DefaultCommandsHandler:
         )
 
     @classmethod
+    def categories(cls, update, context):
+        """
+        Meta method for choosing selected category:
+          assets, incomes or expenses and call their method.
+        """
+
+        buttons = [
+            InlineKeyboardButton(
+                text=category.capitalize(), callback_data=category
+            )
+            for category in CATEGORY_NAMES
+        ]
+
+        return context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="Categories",
+            reply_markup=InlineKeyboardMarkup([buttons]),
+        )
+
+    @classmethod
     def incomes(cls, update, context):
         context.user_data["handler"] = IncomeHandler
 
         return context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Incomes",
+            text="Categories > Incomes",
             reply_markup=InlineKeyboardMarkup(
                 [context.user_data["handler"].BUTTONS]
             ),
@@ -92,7 +114,7 @@ class DefaultCommandsHandler:
 
         return context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Assets",
+            text="Categories > Assets",
             reply_markup=InlineKeyboardMarkup(
                 [context.user_data["handler"].BUTTONS]
             ),
@@ -104,28 +126,27 @@ class DefaultCommandsHandler:
 
         return context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Expenses",
+            text="Categories > Expenses",
             reply_markup=InlineKeyboardMarkup(
                 [context.user_data["handler"].BUTTONS]
             ),
         )
 
     @staticmethod
-    def transaction(update, context):
+    def transactions(update, context):
         pass
 
     @staticmethod
     def help(update, context):
         buttons = [
-            ["/incomes", "/assets"],
-            ["/expenses", "/transaction"],
+            ["/categories", "/transactions"],
             ["/start", "/stop"],
-            ["/unlink"],
+            ["/unlink", "/help"],
         ]
 
         return context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Actions",
+            text="Choose your next keyboard action",
             reply_markup=ReplyKeyboardMarkup(
                 buttons, resize_keyboard=False, one_time_keyboard=True
             ),
