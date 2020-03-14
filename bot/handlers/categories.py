@@ -7,7 +7,13 @@ from main.models import IncomeSource, Asset, ExpenseCategory
 
 
 CATEGORY_NAMES = ("incomes", "assets", "expenses")
-CATEGORY_COMMANDS = ("show", "create", "delete_menu", "delete_item")
+CATEGORY_COMMANDS = (
+    "show",
+    "create",
+    "delete_menu",
+    "delete_item",
+    "select_item",
+)
 
 
 class CategoryHandler(metaclass=ABCMeta):

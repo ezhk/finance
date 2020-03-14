@@ -18,6 +18,14 @@ class DefaultCallbacksHandler:
     def delete_item(update, context):
         context.user_data["handler"].delete_item(update, context)
 
+    @staticmethod
+    def select_item(update, context):
+        context.user_data["handler"].select_item(update, context)
+
 
 class CategoryCallbacksHandler(DefaultCommandsHandler):
+    pass
+
+
+class TransactionCallbacksHandler(DefaultCommandsHandler):
     pass

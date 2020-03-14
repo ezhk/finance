@@ -15,6 +15,11 @@ from bot.handlers.categories import (
     ExpenseHandler,
     CATEGORY_NAMES,
 )
+from bot.handlers.transactions import (
+    IncomingHandler,
+    OutgoingHandler,
+    TRANSACTION_NAMES,
+)
 
 
 class DefaultCommandsHandler:
@@ -134,7 +139,47 @@ class DefaultCommandsHandler:
 
     @staticmethod
     def transactions(update, context):
-        pass
+        """
+        Meta method for choosing selected trancation type:
+          incomes or expenses and call their method.
+        """
+
+        buttons = [
+            InlineKeyboardButton(
+                text=category.capitalize(), callback_data=category
+            )
+            for category in TRANSACTION_NAMES
+        ]
+
+        return context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="Transactions",
+            reply_markup=InlineKeyboardMarkup([buttons]),
+        )
+
+    @classmethod
+    def incoming(cls, update, context):
+        context.user_data["handler"] = IncomingHandler
+
+        return context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="Transactions > Incoming",
+            reply_markup=InlineKeyboardMarkup(
+                [context.user_data["handler"].BUTTONS]
+            ),
+        )
+
+    @classmethod
+    def outgoing(cls, update, context):
+        context.user_data["handler"] = OutgoingHandler
+
+        return context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text="Transactions > Outgoing",
+            reply_markup=InlineKeyboardMarkup(
+                [context.user_data["handler"].BUTTONS]
+            ),
+        )
 
     @staticmethod
     def help(update, context):

@@ -16,9 +16,11 @@ from bot.handlers.categories import (
     CATEGORY_COMMANDS,
     CATEGORY_NAMES,
 )
+from bot.handlers.transactions import TRANSACTION_NAMES
 from bot.handlers.callbacks import (
     DefaultCallbacksHandler,
     CategoryCallbacksHandler,
+    TransactionCallbacksHandler,
 )
 from bot.handlers.commands import DefaultCommandsHandler
 from bot.handlers.messages import DefaultMessagesHandler
@@ -63,6 +65,14 @@ class Command(BaseCommand):
             dispatcher.add_handler(
                 CallbackQueryHandler(
                     getattr(CategoryCallbacksHandler, callback),
+                    pattern=f"^{callback}$",
+                )
+            )
+
+        for callback in TRANSACTION_NAMES:
+            dispatcher.add_handler(
+                CallbackQueryHandler(
+                    getattr(TransactionCallbacksHandler, callback),
                     pattern=f"^{callback}$",
                 )
             )
