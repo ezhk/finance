@@ -10,6 +10,11 @@ module.exports = {
         ws: true,
         changeOrigin: true
       },
+      '^/bot/': {
+        target: 'http://localhost:8000',
+        ws: true,
+        changeOrigin: true
+      },
       '^/rest-auth/': {
         target: 'http://localhost:8000',
         ws: true,

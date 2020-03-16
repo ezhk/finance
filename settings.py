@@ -30,6 +30,9 @@ config.read(glob.glob(INCLUDE_CONFIGS))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config.get("DEFAULT", "SECRET_KEY")
 
+# Telegram bot token
+BOT_TOKEN = config.get("BOT", "TOKEN")
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
@@ -58,6 +61,7 @@ INSTALLED_APPS = [
     # internal projects
     "main.apps.MainappConfig",
     "api.apps.ApiConfig",
+    "bot.apps.BotConfig",
 ]
 
 MIDDLEWARE = [

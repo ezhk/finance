@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.db import models, transaction
+from django.utils import timezone
 
 
 class IncomeSource(models.Model):
@@ -11,6 +12,9 @@ class IncomeSource(models.Model):
     description = models.CharField(
         verbose_name="Income source description", max_length=2048, blank=False,
     )
+
+    def __str__(self):
+        return f"{self.description}"
 
 
 class Asset(models.Model):
@@ -56,6 +60,9 @@ class Asset(models.Model):
         blank=True,
     )
 
+    def __str__(self):
+        return f"{self.description} (balance: {self.balance}, type: {self.get_type_display()})"
+
 
 class ExpenseCategory(models.Model):
     user = models.ForeignKey(
@@ -74,6 +81,19 @@ class ExpenseCategory(models.Model):
         upload_to="expense-images",
         blank=True,
     )
+
+    @property
+    def monthly_expenses(self):
+        expenses = ExpenseTransaction.objects.filter(
+            expense=self,
+            created_at__year=timezone.now().year,
+            created_at__month=timezone.now().month,
+        ).annotate(balance=models.Sum("amount"))
+
+        return expenses.first().balance if expenses.count() else 0
+
+    def __str__(self):
+        return f"{self.description} (monthly limit: {self.monthly_expenses:.2f}/{self.monthly_limit:.2f})"
 
 
 class AbstractTransaction(models.Model):
@@ -131,6 +151,13 @@ class IncomeTransaction(AbstractTransaction):
             super().delete()
         return True
 
+    def __str__(self):
+        return (
+            f"{self.created_at.strftime('%d-%m-%Y %H:%M')}:\n"
+            + f"    {self.income.description} > {self.asset.description}"
+            + f" — {self.amount:.2f}"
+        )
+
 
 class ExpenseTransaction(AbstractTransaction):
     expense = models.ForeignKey(ExpenseCategory, on_delete=models.CASCADE)
@@ -153,6 +180,13 @@ class ExpenseTransaction(AbstractTransaction):
             self.inc_asset(self.amount)
             super().delete()
         return True
+
+    def __str__(self):
+        return (
+            f"{self.created_at.strftime('%d-%m-%Y %H:%M')}:\n"
+            + f"    {self.asset.description} > {self.expense.description}"
+            + f" — {self.amount:.2f}"
+        )
 
 
 class FabricTransaction:
