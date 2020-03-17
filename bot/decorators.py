@@ -8,7 +8,7 @@ from bot.models import TelegramUser
 def username_extension(func):
     """
     Decorator validates username link between TG and site
-      and also add username value as latest funcion argument.
+        and also add username value as latest funcion argument.
     """
 
     def _get_username(update):

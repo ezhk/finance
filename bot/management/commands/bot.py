@@ -91,9 +91,3 @@ class Command(BaseCommand):
         self._add_message_handlers(dispatcher)
 
         updater.start_polling()
-
-        # bot = telegram.Bot(
-        #     token=settings.BOT_TOKEN
-        # )
-        # print(bot.get_me())
-        # {'id': 1013240804, 'first_name': 'finance-pyexec-test', 'is_bot': True, 'username': 'FinancePyexecTestBot'}

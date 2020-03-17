@@ -1,4 +1,10 @@
 class DefaultMessagesHandler:
+    """
+    Default message handler, that calls
+      process_dialog() method in handler class
+      if dialog has stopped.
+    """
+
     def __call__(self, update, context):
         # update userdata
         context.user_data.update(

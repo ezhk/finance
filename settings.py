@@ -155,6 +155,7 @@ REST_FRAMEWORK = {
 
 # Auth param
 SITE_ID = 1
+SITE_URL = "https://finance.py-exec.ru"
 
 LOGGING = {
     "version": 1,
