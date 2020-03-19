@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from django.utils import timezone
 
-from bot.decorators import username_extension
+from bot.decorators import username_extension, logger
 from main.models import (
     IncomeTransaction,
     ExpenseTransaction,
@@ -26,6 +26,7 @@ class TransactionHandler(metaclass=ABCMeta):
     CREATE_DIALOG = ({"text": None, "reply_markup": None, "next": None},)
 
     @classmethod
+    @logger
     @username_extension
     def create(cls, update, context, username):
         """
@@ -74,6 +75,7 @@ class TransactionHandler(metaclass=ABCMeta):
             )
 
     @classmethod
+    @logger
     def select_item(cls, update, context):
         """
         Method store selected item in create dialog,
@@ -151,6 +153,7 @@ class TransactionHandler(metaclass=ABCMeta):
         return "Transaction has created"
 
     @classmethod
+    @logger
     @username_extension
     def show(cls, update, context, username):
         """
@@ -173,6 +176,7 @@ class TransactionHandler(metaclass=ABCMeta):
         )
 
     @classmethod
+    @logger
     @username_extension
     def delete_menu(cls, update, context, username):
         """
@@ -201,6 +205,7 @@ class TransactionHandler(metaclass=ABCMeta):
         )
 
     @classmethod
+    @logger
     @username_extension
     def delete_item(cls, update, context, username):
         """
@@ -251,7 +256,7 @@ class IncomingHandler(TransactionHandler):
                 "next": "income",
             },
             {
-                "text": "Choose Asset category",
+                "text": "Choose asset category",
                 "reply_markup": InlineKeyboardMarkup(
                     [
                         [
