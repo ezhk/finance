@@ -17,6 +17,21 @@ CATEGORY_COMMANDS = (
 
 
 class CategoryHandler(metaclass=ABCMeta):
+    """
+    Metaclass with full methods presentation.
+        In childclasses redefines only based
+        contants, like a MODEL or CREATE_DIALOG.
+
+    Required methods:
+    - show
+    - create
+    - process_dialog
+    - delete_menu
+    - delete_item
+    Sometimes using @username_extension that
+        add username as latest field in args.
+    """
+
     MODEL = None
 
     BUTTONS = (
@@ -33,6 +48,11 @@ class CategoryHandler(metaclass=ABCMeta):
 
     @classmethod
     def _start_dialog(cls, update, context):
+        """
+        Method starts dialog and define some user_data params,
+            which using for store values and their names.
+        """
+
         try:
             message, next_value = next(context.user_data["dialog"])
             context.user_data["next"] = next_value
@@ -47,8 +67,13 @@ class CategoryHandler(metaclass=ABCMeta):
 
     @classmethod
     @username_extension
-    @abstractmethod
     def process_dialog(cls, update, context, username):
+        """
+        Convert all received data from dialog,
+            validate keys as model fields,
+            create model object and save them.
+        """
+
         model_data = {}
         for field, value in context.user_data.items():
             try:
@@ -67,8 +92,11 @@ class CategoryHandler(metaclass=ABCMeta):
 
     @classmethod
     @username_extension
-    @abstractmethod
     def show(cls, update, context, username):
+        """
+        Return model objects.
+        """
+
         context.bot.send_message(
             chat_id=update.effective_chat.id,
             text="\n".join(
@@ -80,17 +108,23 @@ class CategoryHandler(metaclass=ABCMeta):
         )
 
     @classmethod
-    @abstractmethod
     def create(cls, update, context):
-        """Create category object."""
+        """
+        Create category object.
+        """
+
         context.user_data["dialog"] = cls._dialog()
         cls._start_dialog(update, context)
 
     @classmethod
     @username_extension
-    @abstractmethod
     def delete_menu(cls, update, context, username):
-        """Delete category by ID."""
+        """
+        Delete category by ID.
+        Set callbacks for buttons as delete_item:ID,
+            in delete_item() callback data split by ":".
+        """
+
         markup = InlineKeyboardMarkup([])
         for record in cls.MODEL.objects.filter(user=username):
             markup.inline_keyboard.append(
@@ -110,8 +144,11 @@ class CategoryHandler(metaclass=ABCMeta):
 
     @classmethod
     @username_extension
-    @abstractmethod
     def delete_item(cls, update, context, username):
+        """
+        Remove data by received ID in callback query data.
+        """
+
         try:
             _, pk = update.callback_query.data.split(":", 1)
         except ValueError as err:
@@ -128,6 +165,11 @@ class CategoryHandler(metaclass=ABCMeta):
 
 
 class IncomeHandler(CategoryHandler):
+    """
+    Child for abstract CategoryHandler.
+        MODEL and CREATE_DIALOG have redefined.
+    """
+
     MODEL = IncomeSource
     CREATE_DIALOG = (("Input category name", "description"),)
 

@@ -2,6 +2,11 @@ from bot.handlers.commands import DefaultCommandsHandler
 
 
 class DefaultCallbacksHandler:
+    """
+    Based possoble callbacks for CallbackQueryHandler.
+        Using by button click in different dialogs.
+    """
+
     @staticmethod
     def show(update, context):
         context.user_data["handler"].show(update, context)

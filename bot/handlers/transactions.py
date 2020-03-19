@@ -25,17 +25,40 @@ class TransactionHandler(metaclass=ABCMeta):
     )
     CREATE_DIALOG = ({"text": None, "reply_markup": None, "next": None},)
 
-    @staticmethod
-    def _create_dialog(username):
-        pass
+    @classmethod
+    @username_extension
+    def create(cls, update, context, username):
+        """
+        Create transactoin button action.
+        Generate user dialog (ask about source and destination transaction)
+          and start questions thread.
+        """
+
+        context.user_data["dialog"] = cls._dialog_generator(username)
+        cls._start_dialog(update, context)
 
     @classmethod
     def _dialog_generator(cls, username):
+        """
+        Generator return _create_dialog items,
+          presented as dict with params "reply_markup", "text", "next".
+        """
         for dialog_params in cls._create_dialog(username):
             yield dialog_params
 
+    @staticmethod
+    def _create_dialog(username):
+        """
+        Create iteration objects with dialog structure.
+        """
+
     @classmethod
     def _start_dialog(cls, update, context):
+        """
+        Method starts dialog and define some user_data params,
+            which using for store values and their names.
+        """
+
         try:
             dialog_params = next(context.user_data["dialog"])
             context.user_data["next"] = dialog_params.get("next")
@@ -49,12 +72,17 @@ class TransactionHandler(metaclass=ABCMeta):
             context.bot.send_message(
                 chat_id=update.effective_chat.id, text="Error: empty dialog"
             )
-        except Exception as err:
-            print(err)
 
     @classmethod
-    @abstractmethod
     def select_item(cls, update, context):
+        """
+        Method store selected item in create dialog,
+            it might be Asset, Income or Expense ID.
+
+        Also method shows next dialog iteration.
+        Latest dialog ends in bot.handlers.messages.
+        """
+
         try:
             _, pk = update.callback_query.data.split(":", 1)
             context.user_data.update({context.user_data["next"]: pk})
@@ -78,6 +106,12 @@ class TransactionHandler(metaclass=ABCMeta):
 
     @staticmethod
     def _get_model_by_name(classname):
+        """
+        Specific method, that return model by
+            generator "next" value.
+        Insing at process_dialog().
+        """
+
         if classname == "asset":
             return Asset
         elif classname == "income":
@@ -88,8 +122,13 @@ class TransactionHandler(metaclass=ABCMeta):
 
     @classmethod
     @username_extension
-    @abstractmethod
     def process_dialog(cls, update, context, username):
+        """
+        Convert all received data from dialog,
+            validate keys as model fields,
+            create model object and save them.
+        """
+
         model_data = {}
         for field, value in context.user_data.items():
             try:
@@ -113,8 +152,11 @@ class TransactionHandler(metaclass=ABCMeta):
 
     @classmethod
     @username_extension
-    @abstractmethod
     def show(cls, update, context, username):
+        """
+        Return model objects for current month.
+        """
+
         return context.bot.send_message(
             chat_id=update.effective_chat.id,
             text="\n".join(
@@ -132,16 +174,11 @@ class TransactionHandler(metaclass=ABCMeta):
 
     @classmethod
     @username_extension
-    @abstractmethod
-    def create(cls, update, context, username):
-        context.user_data["dialog"] = cls._dialog_generator(username)
-        cls._start_dialog(update, context)
-
-    @classmethod
-    @username_extension
-    @abstractmethod
     def delete_menu(cls, update, context, username):
-        """Delete category by ID."""
+        """
+        Show dialog buttons with last month transactions.
+        """
+
         markup = InlineKeyboardMarkup([])
         for record in cls.MODEL.objects.filter(
             asset__user=username,
@@ -165,8 +202,11 @@ class TransactionHandler(metaclass=ABCMeta):
 
     @classmethod
     @username_extension
-    @abstractmethod
     def delete_item(cls, update, context, username):
+        """
+        Remove transactions by ID.
+        """
+
         try:
             _, pk = update.callback_query.data.split(":", 1)
         except ValueError as err:
@@ -187,6 +227,11 @@ class IncomingHandler(TransactionHandler):
 
     @staticmethod
     def _create_dialog(username):
+        """
+        Describe all possible dialog thread
+            for create transaction.
+        """
+
         return (
             {
                 "text": "Choose income category",
@@ -262,9 +307,6 @@ class OutgoingHandler(TransactionHandler):
                 ),
                 "next": "expense",
             },
-            {
-                "text": "Input tranmsaction amount",
-                "reply_markup": None,
-                "next": "amount",
-            },
+            {"text": "Input tranmsaction amount", "next": "amount",},
         )
+

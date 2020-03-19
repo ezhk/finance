@@ -1,9 +1,13 @@
+from urllib.parse import urljoin
+
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     ReplyKeyboardMarkup,
+    ParseMode,
 )
 
 from bot.models import TelegramUser
@@ -23,8 +27,20 @@ from bot.handlers.transactions import (
 
 
 class DefaultCommandsHandler:
+    """
+    Class describe commands in bot calls.
+        /start and /stop are base commands.
+        /help sets keyboard with all possible commands.
+    """
+
     @staticmethod
     def start(update, context):
+        """
+        /start command checks links between current
+            TG user and sire user, and if user doesn't
+            create link — show specially link to site.
+        """
+
         tg_username = update.effective_user.username
         obj, _ = TelegramUser.objects.select_related().get_or_create(
             tg_username=tg_username
@@ -39,13 +55,16 @@ class DefaultCommandsHandler:
             )
 
         token = TokenGenerator().make_token(obj)
-        url = reverse(
-            "bot:link-account",
-            kwargs={
-                "username": tg_username,
-                "chat": update.effective_chat.id,
-                "token": token,
-            },
+        url = urljoin(
+            settings.SITE_URL,
+            reverse(
+                "bot:link-account",
+                kwargs={
+                    "username": tg_username,
+                    "chat": update.effective_chat.id,
+                    "token": token,
+                },
+            ),
         )
         context.bot.send_message(
             chat_id=update.effective_chat.id,
@@ -56,6 +75,10 @@ class DefaultCommandsHandler:
 
     @staticmethod
     def stop(update, context):
+        """
+        Make user inactive.
+        """
+
         tg_username = update.effective_user.username
 
         try:
@@ -69,6 +92,10 @@ class DefaultCommandsHandler:
 
     @staticmethod
     def unlink(update, context):
+        """
+        Remove link to site username for current TG user.
+        """
+
         tg_username = update.effective_user.username
 
         try:
@@ -85,7 +112,7 @@ class DefaultCommandsHandler:
     def categories(cls, update, context):
         """
         Meta method for choosing selected category:
-          assets, incomes or expenses and call their method.
+            assets, incomes or expenses and call their method.
         """
 
         buttons = [
@@ -97,8 +124,9 @@ class DefaultCommandsHandler:
 
         return context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Categories",
+            text="*Categories*",
             reply_markup=InlineKeyboardMarkup([buttons]),
+            parse_mode=ParseMode.MARKDOWN,
         )
 
     @classmethod
@@ -107,10 +135,11 @@ class DefaultCommandsHandler:
 
         return context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Categories > Incomes",
+            text="*Categories* > *Incomes*",
             reply_markup=InlineKeyboardMarkup(
                 [context.user_data["handler"].BUTTONS]
             ),
+            parse_mode=ParseMode.MARKDOWN,
         )
 
     @classmethod
@@ -119,10 +148,11 @@ class DefaultCommandsHandler:
 
         return context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Categories > Assets",
+            text="*Categories* > *Assets*",
             reply_markup=InlineKeyboardMarkup(
                 [context.user_data["handler"].BUTTONS]
             ),
+            parse_mode=ParseMode.MARKDOWN,
         )
 
     @classmethod
@@ -131,17 +161,19 @@ class DefaultCommandsHandler:
 
         return context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Categories > Expenses",
+            text="*Categories* > *Expenses*",
             reply_markup=InlineKeyboardMarkup(
                 [context.user_data["handler"].BUTTONS]
             ),
+            parse_mode=ParseMode.MARKDOWN,
         )
 
     @staticmethod
     def transactions(update, context):
         """
         Meta method for choosing selected trancation type:
-          incomes or expenses and call their method.
+          incomes (incoming method) or expenses (outgoing method)
+          and call their methods.
         """
 
         buttons = [
@@ -153,8 +185,9 @@ class DefaultCommandsHandler:
 
         return context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Transactions",
+            text="*Transactions*",
             reply_markup=InlineKeyboardMarkup([buttons]),
+            parse_mode=ParseMode.MARKDOWN,
         )
 
     @classmethod
@@ -163,10 +196,11 @@ class DefaultCommandsHandler:
 
         return context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Transactions > Incoming",
+            text="*Transactions* > *Incoming*",
             reply_markup=InlineKeyboardMarkup(
                 [context.user_data["handler"].BUTTONS]
             ),
+            parse_mode=ParseMode.MARKDOWN,
         )
 
     @classmethod
@@ -175,14 +209,19 @@ class DefaultCommandsHandler:
 
         return context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text="Transactions > Outgoing",
+            text="*Transactions* > *Outgoing*",
             reply_markup=InlineKeyboardMarkup(
                 [context.user_data["handler"].BUTTONS]
             ),
+            parse_mode=ParseMode.MARKDOWN,
         )
 
     @staticmethod
     def help(update, context):
+        """
+        Show full supported keuboard map.
+        """
+
         buttons = [
             ["/categories", "/transactions"],
             ["/start", "/stop"],
