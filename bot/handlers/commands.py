@@ -10,6 +10,7 @@ from telegram import (
     ParseMode,
 )
 
+from bot.decorators import logger
 from bot.models import TelegramUser
 from bot.utils import TokenGenerator
 
@@ -34,6 +35,7 @@ class DefaultCommandsHandler:
     """
 
     @staticmethod
+    @logger
     def start(update, context):
         """
         /start command checks links between current
@@ -74,6 +76,7 @@ class DefaultCommandsHandler:
         )
 
     @staticmethod
+    @logger
     def stop(update, context):
         """
         Make user inactive.
@@ -91,6 +94,7 @@ class DefaultCommandsHandler:
         )
 
     @staticmethod
+    @logger
     def unlink(update, context):
         """
         Remove link to site username for current TG user.
@@ -109,6 +113,7 @@ class DefaultCommandsHandler:
         )
 
     @classmethod
+    @logger
     def categories(cls, update, context):
         """
         Meta method for choosing selected category:
@@ -130,6 +135,7 @@ class DefaultCommandsHandler:
         )
 
     @classmethod
+    @logger
     def incomes(cls, update, context):
         context.user_data["handler"] = IncomeHandler
 
@@ -143,6 +149,7 @@ class DefaultCommandsHandler:
         )
 
     @classmethod
+    @logger
     def assets(cls, update, context):
         context.user_data["handler"] = AssetHandler
 
@@ -156,6 +163,7 @@ class DefaultCommandsHandler:
         )
 
     @classmethod
+    @logger
     def expenses(cls, update, context):
         context.user_data["handler"] = ExpenseHandler
 
@@ -169,6 +177,7 @@ class DefaultCommandsHandler:
         )
 
     @staticmethod
+    @logger
     def transactions(update, context):
         """
         Meta method for choosing selected trancation type:
@@ -191,6 +200,7 @@ class DefaultCommandsHandler:
         )
 
     @classmethod
+    @logger
     def incoming(cls, update, context):
         context.user_data["handler"] = IncomingHandler
 
@@ -204,6 +214,7 @@ class DefaultCommandsHandler:
         )
 
     @classmethod
+    @logger
     def outgoing(cls, update, context):
         context.user_data["handler"] = OutgoingHandler
 
@@ -217,6 +228,7 @@ class DefaultCommandsHandler:
         )
 
     @staticmethod
+    @logger
     def help(update, context):
         """
         Show full supported keuboard map.

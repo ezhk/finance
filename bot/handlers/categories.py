@@ -3,6 +3,7 @@ from abc import ABCMeta, abstractmethod
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
 
 from bot.decorators import username_extension
+from bot.decorators import logger
 from main.models import IncomeSource, Asset, ExpenseCategory
 
 
@@ -91,6 +92,7 @@ class CategoryHandler(metaclass=ABCMeta):
         return "Category has created"
 
     @classmethod
+    @logger
     @username_extension
     def show(cls, update, context, username):
         """
@@ -108,6 +110,7 @@ class CategoryHandler(metaclass=ABCMeta):
         )
 
     @classmethod
+    @logger
     def create(cls, update, context):
         """
         Create category object.
@@ -117,6 +120,7 @@ class CategoryHandler(metaclass=ABCMeta):
         cls._start_dialog(update, context)
 
     @classmethod
+    @logger
     @username_extension
     def delete_menu(cls, update, context, username):
         """
@@ -143,6 +147,7 @@ class CategoryHandler(metaclass=ABCMeta):
         )
 
     @classmethod
+    @logger
     @username_extension
     def delete_item(cls, update, context, username):
         """

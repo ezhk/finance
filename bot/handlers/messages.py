@@ -1,3 +1,6 @@
+from bot.decorators import logger
+
+
 class DefaultMessagesHandler:
     """
     Default message handler, that calls
@@ -5,6 +8,7 @@ class DefaultMessagesHandler:
       if dialog has stopped.
     """
 
+    @logger
     def __call__(self, update, context):
         # update userdata
         context.user_data.update(

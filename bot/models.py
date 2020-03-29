@@ -51,7 +51,9 @@ class TelegramUser(models.Model):
 
 class TelegramMessages(models.Model):
     tg_username = models.ForeignKey(TelegramUser, on_delete=models.CASCADE)
-    command = models.CharField(
-        verbose_name="User message", max_length=2048, blank=True,
+    json_message = models.CharField(
+        verbose_name="User message presented as JSON",
+        max_length=2048,
+        blank=True,
     )
     created_at = models.DateTimeField(auto_now_add=True)
