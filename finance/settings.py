@@ -28,10 +28,17 @@ config.read(glob.glob(INCLUDE_CONFIGS))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config.get("DEFAULT", "SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY") or config.get(
+    "DEFAULT", "SECRET_KEY"
+)
 
 # Telegram bot token
-BOT_TOKEN = config.get("BOT", "TOKEN")
+BOT_TOKEN = os.environ.get("BOT_TOKEN") or config.get("BOT", "TOKEN")
+
+# Database path
+DATABASE_PATH = os.environ.get("DATABASE_PATH") or os.path.join(
+    BASE_DIR, "db.sqlite3"
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -75,7 +82,7 @@ MIDDLEWARE = [
     "main.middleware.PermissionsMiddleware",
 ]
 
-ROOT_URLCONF = "urls"
+ROOT_URLCONF = "finance.urls"
 
 TEMPLATES = [
     {
@@ -93,17 +100,14 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "wsgi.application"
+WSGI_APPLICATION = "finance.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-    }
+    "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": DATABASE_PATH}
 }
 
 

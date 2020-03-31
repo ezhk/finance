@@ -1,7 +1,7 @@
 digraph model_graph {
   // Dotfile by Django-Extensions graph_models
-  // Created: 2020-01-10 13:16
-  // Cli Options: -a
+  // Created: 2020-03-31 13:00
+  // Cli Options: -a --dot -o models.dot
 
   fontname = "Roboto"
   fontsize = 8
@@ -819,6 +819,40 @@ digraph model_graph {
 
 
 
+  main_models_AbstractTransaction [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    AbstractTransaction
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>asset</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">amount</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">DecimalField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">created_at</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
   main_models_IncomeSource [label=<
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
@@ -965,7 +999,7 @@ digraph model_graph {
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    IncomeTransaction
+    IncomeTransaction<BR/>&lt;<FONT FACE="Roboto"><I>AbstractTransaction</I></FONT>&gt;
     </B></FONT></TD></TR>
   
   
@@ -978,9 +1012,9 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>asset</B></FONT>
+    <FONT FACE="Roboto"><I><B>asset</B></I></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    <FONT FACE="Roboto"><I><B>ForeignKey (id)</B></I></FONT>
     </TD></TR>
   
   
@@ -994,17 +1028,17 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">amount</FONT>
+    <FONT FACE="Roboto"><I>amount</I></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">DecimalField</FONT>
+    <FONT FACE="Roboto"><I>DecimalField</I></FONT>
     </TD></TR>
   
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">created_at</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>created_at</I></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
     </TD></TR>
   
   
@@ -1015,7 +1049,7 @@ digraph model_graph {
     <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
     <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
     <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
-    ExpenseTransaction
+    ExpenseTransaction<BR/>&lt;<FONT FACE="Roboto"><I>AbstractTransaction</I></FONT>&gt;
     </B></FONT></TD></TR>
   
   
@@ -1028,9 +1062,9 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto"><B>asset</B></FONT>
+    <FONT FACE="Roboto"><I><B>asset</B></I></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    <FONT FACE="Roboto"><I><B>ForeignKey (id)</B></I></FONT>
     </TD></TR>
   
   
@@ -1044,9 +1078,104 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT FACE="Roboto">amount</FONT>
+    <FONT FACE="Roboto"><I>amount</I></FONT>
     </TD><TD ALIGN="LEFT">
-    <FONT FACE="Roboto">DecimalField</FONT>
+    <FONT FACE="Roboto"><I>DecimalField</I></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>created_at</I></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto"><I>DateTimeField</I></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">tags</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+
+
+
+  bot_models_TelegramUser [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    TelegramUser
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>AutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>user</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">is_active</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">BooleanField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto">tg_username</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto">CharField</FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">updated_at</FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT COLOR="#7B7B7B" FACE="Roboto">DateTimeField</FONT>
+    </TD></TR>
+  
+  
+    </TABLE>
+    >]
+
+  bot_models_TelegramMessages [label=<
+    <TABLE BGCOLOR="white" BORDER="1" CELLBORDER="0" CELLSPACING="0">
+    <TR><TD COLSPAN="2" CELLPADDING="5" ALIGN="CENTER" BGCOLOR="#1b563f">
+    <FONT FACE="Roboto" COLOR="white" POINT-SIZE="10"><B>
+    TelegramMessages
+    </B></FONT></TD></TR>
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>id</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>AutoField</B></FONT>
+    </TD></TR>
+  
+  
+  
+    <TR><TD ALIGN="LEFT" BORDER="0">
+    <FONT FACE="Roboto"><B>tg_username</B></FONT>
+    </TD><TD ALIGN="LEFT">
+    <FONT FACE="Roboto"><B>ForeignKey (id)</B></FONT>
     </TD></TR>
   
   
@@ -1060,7 +1189,7 @@ digraph model_graph {
   
   
     <TR><TD ALIGN="LEFT" BORDER="0">
-    <FONT COLOR="#7B7B7B" FACE="Roboto">tags</FONT>
+    <FONT COLOR="#7B7B7B" FACE="Roboto">json_message</FONT>
     </TD><TD ALIGN="LEFT">
     <FONT COLOR="#7B7B7B" FACE="Roboto">CharField</FONT>
     </TD></TR>
@@ -1145,6 +1274,9 @@ digraph model_graph {
   [label=" user (auth_token)"] [arrowhead=none, arrowtail=none, dir=both];
 
 
+  main_models_AbstractTransaction -> main_models_Asset
+  [label=" asset (abstracttransaction)"] [arrowhead=none, arrowtail=dot, dir=both];
+
   main_models_IncomeSource -> django_contrib_auth_models_User
   [label=" user (incomesource)"] [arrowhead=none, arrowtail=dot, dir=both];
 
@@ -1154,17 +1286,24 @@ digraph model_graph {
   main_models_ExpenseCategory -> django_contrib_auth_models_User
   [label=" user (expensecategory)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  main_models_IncomeTransaction -> main_models_Asset
-  [label=" asset (incometransaction)"] [arrowhead=none, arrowtail=dot, dir=both];
-
   main_models_IncomeTransaction -> main_models_IncomeSource
   [label=" income (incometransaction)"] [arrowhead=none, arrowtail=dot, dir=both];
 
-  main_models_ExpenseTransaction -> main_models_Asset
-  [label=" asset (expensetransaction)"] [arrowhead=none, arrowtail=dot, dir=both];
+  main_models_IncomeTransaction -> main_models_AbstractTransaction
+  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
 
   main_models_ExpenseTransaction -> main_models_ExpenseCategory
   [label=" expense (expensetransaction)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  main_models_ExpenseTransaction -> main_models_AbstractTransaction
+  [label=" abstract\ninheritance"] [arrowhead=empty, arrowtail=none, dir=both];
+
+
+  bot_models_TelegramUser -> django_contrib_auth_models_User
+  [label=" user (telegramuser)"] [arrowhead=none, arrowtail=dot, dir=both];
+
+  bot_models_TelegramMessages -> bot_models_TelegramUser
+  [label=" tg_username (telegrammessages)"] [arrowhead=none, arrowtail=dot, dir=both];
 
 
 }

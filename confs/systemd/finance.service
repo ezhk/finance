@@ -1,0 +1,27 @@
+[Unit]
+Description=Daphne finance backend
+After=network.target auditd.service
+Before=nginx.service
+
+[Service]
+Environment=VENV_DIR=/opt/venvs/finance
+Environment=DATA_DIR=/var/www/finance
+Environment=DATABASE_PATH=/var/www/finance/db.sqlite3
+
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/finance
+
+PermissionsStartOnly=true
+ExecStartPre=/bin/chown -R www-data ${DATA_DIR}
+ExecStart=/opt/venvs/finance/bin/daphne                 \
+          --unix-socket finance.sock                    \
+          --http-timeout 10                             \
+          --access-log daphne-finance-access.log        \
+          finance.asgi:application
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+Alias=finance.service
