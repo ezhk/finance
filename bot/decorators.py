@@ -51,7 +51,8 @@ def logger(func):
                 tg_username=update.effective_user.username
             )
         except ObjectDoesNotExist:
-            return None
+            # on /start action user doesn't exist
+            return func(*args)
 
         message = {}
 
