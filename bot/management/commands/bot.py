@@ -84,12 +84,12 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        import logging
+        # import logging
 
-        logging.basicConfig(
-            level=logging.DEBUG,
-            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        )
+        # logging.basicConfig(
+        #     level=logging.DEBUG,
+        #     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        # )
 
         updater = Updater(token=settings.BOT_TOKEN, use_context=True,)
         dispatcher = updater.dispatcher
