@@ -59,4 +59,4 @@ And yes, it's still has testing state.
         ./manage.py bot
         cd front && npm run serve
 
-7. show `confs` directory as comfiguration exmaples for systemd and nginx.
+7. look at the `confs` directory as comfiguration exmaples for systemd and nginx.
