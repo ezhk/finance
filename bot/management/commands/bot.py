@@ -42,7 +42,6 @@ class Command(BaseCommand):
             "categories",
             "transactions",
         ):
-            print(command)
             dispatcher.add_handler(
                 CommandHandler(
                     command, getattr(DefaultCommandsHandler, command)
