@@ -7,6 +7,7 @@ Before=nginx.service
 Environment=VENV_DIR=/opt/venvs/finance
 Environment=DATA_DIR=/var/www/finance
 Environment=DATABASE_PATH=/var/www/finance/db.sqlite3
+Environment=DJANGO_SETTINGS_MODULE=finance.settings
 
 User=www-data
 Group=www-data
