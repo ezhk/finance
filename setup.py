@@ -7,6 +7,5 @@ setup(
     author="Andrey Kiselev",
     author_email="kiselevandrew@yandex.ru",
     url="https://github.com/ezhk/finance/",
-
     packages=find_packages(exclude=["migrations"]),
 )
