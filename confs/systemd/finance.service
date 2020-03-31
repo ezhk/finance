@@ -19,13 +19,6 @@ ExecStart=/opt/venvs/finance/bin/daphne                 \
           --http-timeout 10                             \
           --access-log daphne-finance-access.log        \
           finance.asgi:application
-# ExecStart=/opt/venvs/finance/bin/gunicorn --chdir=${DATA_DIR}                             \
-#                                           --pythonpath=${VENV_DIR}/bin/python3            \
-#                                           --workers 3                                     \
-#                                           --bind unix:${DATA_DIR}/finance.sock            \
-#                                           --access-logfile gunicorn-finance-access.log    \
-#                                           --error-logfile gunicorn-finance-error.log      \
-#                                           wsgi
 Restart=on-failure
 RestartSec=5s
 
