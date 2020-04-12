@@ -88,9 +88,11 @@ class ExpenseCategory(models.Model):
             expense=self,
             created_at__year=timezone.now().year,
             created_at__month=timezone.now().month,
-        ).annotate(balance=models.Sum("amount"))
+        ).aggregate(balance=models.Sum("amount"))
 
-        return expenses.first().balance if expenses.count() else 0
+        return (
+            0 if expenses.get("balance", None) is None else expenses["balance"]
+        )
 
     def __str__(self):
         return f"{self.description} (monthly limit: {self.monthly_expenses:.2f}/{self.monthly_limit:.2f})"
